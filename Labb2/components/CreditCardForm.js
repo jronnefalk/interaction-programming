@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { formatInputCardNumber } from "../functions/utils"; // Adjust the path as needed
+import { formatInputCardNumber, formatCVVNumber } from "../functions/utils"; // Adjust the path as needed
 
 const CreditCardForm = ({
   cardNumber,
@@ -20,6 +20,7 @@ const CreditCardForm = ({
   setCardYear,
   cardCvv,
   setCardCvv,
+  handleFlip,
 }) => {
   // Simplified months and years arrays
   const months = [
@@ -112,6 +113,8 @@ const CreditCardForm = ({
             onChangeText={(text) => setCardCvv(formatCVVNumber(text))}
             keyboardType="numeric"
             secureTextEntry
+            onFocus={() => handleFlip(true)}
+            onBlur={() => handleFlip(false)}
           />
         </View>
       </View>
@@ -127,7 +130,7 @@ const CreditCardForm = ({
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    paddingTop: 190,
+    paddingTop: 160,
     backgroundColor: "white",
     borderRadius: 10,
     shadowColor: "#000",

@@ -29,3 +29,19 @@ export const formatExpiryDate = (month, year) => {
   const formattedYear = year ? year.slice(-2) : "YY";
   return `${formattedMonth}/${formattedYear}`;
 };
+
+export const getCardTypeImage = (number) => {
+  if (!number) return require("../assets/visa.png"); // Default image for undefined or null number
+
+  if (number.startsWith("4")) {
+    return require("../assets/visa.png"); // Visa
+  } else if (/^5[1-5]/.test(number)) {
+    return require("../assets/mastercard.png"); // MasterCard
+  } else if (/^3[47]/.test(number)) {
+    return require("../assets/amex.png"); // American Express
+  } else if (/^6(?:011|5)/.test(number)) {
+    return require("../assets/discover.png"); // Discover
+  }
+
+  return require("../assets/visa.png"); // Default card image
+};
