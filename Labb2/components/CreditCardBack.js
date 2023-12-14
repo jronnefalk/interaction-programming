@@ -1,18 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
-import { getCardTypeImage } from "../functions/utils";
+import { getCardTypeImage, formatCVVNumber } from "../functions/utils";
 
 const CreditCardBack = ({ cardCvv, number }) => {
+  const displayCVV = formatCVVNumber(cardCvv);
+
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
-        source={require("../assets/6.jpeg")} // Replace with the actual image path
+        source={require("../assets/14.jpeg")} // Replace with the actual image path
         style={styles.cardImage}
       >
         <View style={styles.blackStrip}></View> {/* Black strip */}
         <Text style={styles.label}>CVV</Text>
         <View style={styles.cvvField}>
-          <Text style={styles.cvvText}>{cardCvv ? "****" : ""}</Text>
+          <Text style={styles.cvvText}>{displayCVV}</Text>
         </View>
         <Image source={getCardTypeImage(number)} style={styles.cardTypeImage} />
       </ImageBackground>
@@ -65,12 +67,14 @@ const styles = StyleSheet.create({
     height: 30,
     backgroundColor: "white",
     justifyContent: "center",
-    alignItems: "center",
     borderRadius: 4,
+    padding: 5, // Add padding inside the field
   },
   cvvText: {
     color: "black",
     fontSize: 20,
+    textAlign: "right", // Align text to the right
+    width: "100%", // Ensure the text container takes the full width of cvvField
   },
   cardTypeImage: {
     position: "absolute",

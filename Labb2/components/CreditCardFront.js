@@ -14,7 +14,7 @@ const CreditCardFront = ({ number, name, cardMonth, cardYear }) => {
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
-        source={require("../assets/6.jpeg")} // Replace with the actual image path
+        source={require("../assets/14.jpeg")} // Replace with the actual image path
         style={styles.cardImage}
       >
         <View style={styles.cardTop}>

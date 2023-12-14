@@ -21,7 +21,7 @@ export const formatInputCardNumber = (number) => {
 
 export const formatCVVNumber = (text) => {
   // Remove non-digits and limit to 4 characters
-  return text.replace(/\D+/g, "").substring(0, 4);
+  return text.replace(/./g, "*").substring(0, 4);
 };
 
 export const formatExpiryDate = (month, year) => {
