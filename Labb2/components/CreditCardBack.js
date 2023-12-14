@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
 import { getCardTypeImage, formatCVVNumber } from "../functions/utils";
 
 const CreditCardBack = ({ cardCvv, number }) => {
-  const displayCVV = formatCVVNumber(cardCvv);
+  const displayCVV = formatCVVNumber(cardCvv); // Use the function to format the CVV
 
   return (
     <View style={styles.cardContainer}>

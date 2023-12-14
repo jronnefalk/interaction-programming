@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { formatInputCardNumber, formatCVVNumber } from "../functions/utils"; // Adjust the path as needed
+import { formatInputCardNumber, formatCVVNumber } from "../functions/utils";
 
 const CreditCardForm = ({
   cardNumber,
@@ -22,7 +22,6 @@ const CreditCardForm = ({
   setCardCvv,
   handleFlip,
 }) => {
-  // Simplified months and years arrays
   const months = [
     "01",
     "02",
@@ -53,9 +52,9 @@ const CreditCardForm = ({
   };
 
   const handleCardNumberChange = (text) => {
-    const cleaned = text.replace(/\D+/g, "").substring(0, 16); // Remove non-digits and limit to 16 characters
-    const formattedNumberForInput = formatInputCardNumber(cleaned); // Format for the input field
-    setCardNumber(formattedNumberForInput); // Update state
+    const cleaned = text.replace(/\D+/g, "").substring(0, 16);
+    const formattedNumberForInput = formatInputCardNumber(cleaned);
+    setCardNumber(formattedNumberForInput);
   };
 
   return (
@@ -78,7 +77,6 @@ const CreditCardForm = ({
       />
 
       <View style={styles.row}>
-        {/* Container for Expiration Date */}
         <View style={styles.dateContainer}>
           <Text style={styles.label}>Expiration Date</Text>
           <View style={styles.dateInputs}>
@@ -87,6 +85,7 @@ const CreditCardForm = ({
               style={[styles.input, styles.pickerInput]}
               onValueChange={setCardMonth}
             >
+              <Picker.Item label="Month" value="" /> {/* Placeholder item */}
               {months.map((month) => (
                 <Picker.Item key={month} label={month} value={month} />
               ))}
@@ -97,6 +96,7 @@ const CreditCardForm = ({
               style={[styles.input, styles.pickerInput]}
               onValueChange={setCardYear}
             >
+              <Picker.Item label="Year" value="" /> {/* Placeholder item */}
               {years.map((year) => (
                 <Picker.Item key={year} label={year} value={year} />
               ))}
@@ -110,9 +110,10 @@ const CreditCardForm = ({
           <TextInput
             style={styles.cvvInput}
             value={cardCvv}
-            onChangeText={(text) => setCardCvv(formatCVVNumber(text))}
+            onChangeText={setCardCvv}
             keyboardType="numeric"
-            secureTextEntry
+            secureTextEntry={false}
+            maxLength={4} // Set the maximum length of the CVV input
             onFocus={() => handleFlip(true)}
             onBlur={() => handleFlip(false)}
           />
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     position: "relative", // Added for positioning the CreditCardView
   },
   input: {
-    height: 50,
+    height: 40,
     borderColor: "gray",
     borderWidth: 1,
     marginBottom: 15,
@@ -177,11 +178,11 @@ const styles = StyleSheet.create({
   pickerInput: {
     flex: 1,
     marginRight: 5,
+    height: 40,
   },
   cvvInput: {
     flex: 1,
     marginLeft: 5,
-    height: 50,
     borderColor: "gray",
     borderWidth: 1,
     marginBottom: 15,
@@ -207,9 +208,8 @@ const styles = StyleSheet.create({
   },
   label: {
     alignSelf: "flex-start",
-    marginLeft: 20,
     marginBottom: 5,
-    fontSize: 16,
+    fontSize: 14,
     color: "black",
   },
 });
