@@ -1,14 +1,22 @@
-import React from "react";
+import { React, useContext } from "react";
 import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
 import {
   formatCardNumber,
   formatExpiryDate,
   getCardTypeImage,
 } from "../functions/utils";
+import CreditCardContext from "./CreditCardContext";
 
-const CreditCardFront = ({ number, name, cardMonth, cardYear }) => {
+const CreditCardFront = ({
+  number,
+  name,
+  cardMonth,
+  cardYear,
+  focusField,
+  expiry,
+}) => {
   const displayNumber = formatCardNumber(number) || "#### #### #### ####";
-
+  const { setFocusedField } = useContext(CreditCardContext);
   const displayExpiry = formatExpiryDate(cardMonth, cardYear);
 
   return (
@@ -29,19 +37,41 @@ const CreditCardFront = ({ number, name, cardMonth, cardYear }) => {
         </View>
 
         {/* Card Number */}
-        <Text style={styles.cardNumber}>{displayNumber}</Text>
+        <Text
+          style={[
+            styles.cardNumber,
+            focusField === "number" ? styles.highlighted : {},
+          ]}
+          onPress={() => setFocusedField("number")}
+        >
+          {displayNumber}
+        </Text>
 
         {/* Card Holder and Expiration Date */}
         <View style={styles.cardBottom}>
           <View style={styles.cardHolder}>
             <Text style={styles.label}>Card Holder</Text>
-            <Text style={styles.value}>
+            <Text
+              style={[
+                styles.value,
+                focusField === "name" ? styles.highlighted : {},
+              ]}
+              onPress={() => setFocusedField("name")}
+            >
               {name.toUpperCase() || "FULL NAME"}
             </Text>
           </View>
           <View style={styles.expiry}>
             <Text style={styles.label}>Expires</Text>
-            <Text style={styles.value}>{displayExpiry}</Text>
+            <Text
+              style={[
+                styles.value,
+                focusField === "expiry" ? styles.highlighted : {},
+              ]}
+              onPress={() => setFocusedField("expiry")}
+            >
+              {displayExpiry}
+            </Text>
           </View>
         </View>
       </ImageBackground>

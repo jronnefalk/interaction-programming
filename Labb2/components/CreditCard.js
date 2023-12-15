@@ -10,6 +10,8 @@ const CreditCard = ({
   cardYear,
   cardCvv,
   isFlipped,
+  focusField,
+  setFocusedField,
 }) => {
   const flipAnim = useRef(new Animated.Value(0)).current; // 0 is unflipped, 180 is flipped
 
@@ -49,6 +51,8 @@ const CreditCard = ({
           name={name}
           cardMonth={cardMonth}
           cardYear={cardYear} /* other props */
+          focusField={focusField}
+          setFocusedField={setFocusedField}
         />
       </Animated.View>
 
