@@ -78,6 +78,13 @@ const CreditCardForm = ({
     setCardNumber(formattedNumberForInput);
   };
 
+  // Use the formatCVVNumber from utils.js to handle CVV input changes
+  const handleCvvChange = (text) => {
+    // Use formatCVVNumber to sanitize the input
+    const sanitizedCvv = formatCVVNumber(text);
+    setCardCvv(sanitizedCvv);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Card Number</Text>
@@ -134,10 +141,10 @@ const CreditCardForm = ({
           <TextInput
             style={styles.cvvInput}
             value={cardCvv}
-            onChangeText={setCardCvv}
+            onChangeText={handleCvvChange}
             keyboardType="numeric"
             secureTextEntry={false}
-            maxLength={4} // Set the maximum length of the CVV input
+            maxLength={4}
             onFocus={() => handleFlip(true)}
             onBlur={() => handleFlip(false)}
           />

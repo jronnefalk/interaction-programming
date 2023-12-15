@@ -2,15 +2,12 @@ import React from "react";
 import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
 import { getCardTypeImage, formatCVVNumber } from "../functions/utils";
 
-const CreditCardBack = ({ cardCvv, number }) => {
-  const displayCVV = formatCVVNumber(cardCvv); // Use the function to format the CVV
+const CreditCardBack = ({ cardCvv, number, backgroundImage }) => {
+  const displayCVV = "*".repeat(cardCvv.length);
 
   return (
     <View style={styles.cardContainer}>
-      <ImageBackground
-        source={require("../assets/14.jpeg")} // Replace with the actual image path
-        style={styles.cardImage}
-      >
+      <ImageBackground source={backgroundImage} style={styles.cardImage}>
         <View style={styles.blackStrip}></View> {/* Black strip */}
         <Text style={styles.label}>CVV</Text>
         <View style={styles.cvvField}>

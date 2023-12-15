@@ -14,6 +14,7 @@ const CreditCardFront = ({
   cardYear,
   focusField,
   expiry,
+  backgroundImage,
 }) => {
   const displayNumber = formatCardNumber(number) || "#### #### #### ####";
   const { setFocusedField } = useContext(CreditCardContext);
@@ -21,10 +22,7 @@ const CreditCardFront = ({
 
   return (
     <View style={styles.cardContainer}>
-      <ImageBackground
-        source={require("../assets/14.jpeg")} // Replace with the actual image path
-        style={styles.cardImage}
-      >
+      <ImageBackground source={backgroundImage} style={styles.cardImage}>
         <View style={styles.cardTop}>
           <Image
             source={require("../assets/chip.png")}

@@ -14,6 +14,16 @@ const CreditCard = ({
   setFocusedField,
 }) => {
   const flipAnim = useRef(new Animated.Value(0)).current; // 0 is unflipped, 180 is flipped
+  const [backgroundImage, setBackgroundImage] = useState(null);
+
+  useEffect(() => {
+    // Assuming you have images from 1.jpeg to 5.jpeg for example
+    const totalImages = 25;
+    const randomImageNumber = Math.floor(Math.random() * totalImages) + 1; // Generate a random number between 1 and totalImages
+    const randomImagePath = require(`../assets/${randomImageNumber}.jpeg`);
+
+    setBackgroundImage(randomImagePath);
+  }, []);
 
   useEffect(() => {
     Animated.timing(flipAnim, {
@@ -53,6 +63,7 @@ const CreditCard = ({
           cardYear={cardYear} /* other props */
           focusField={focusField}
           setFocusedField={setFocusedField}
+          backgroundImage={backgroundImage}
         />
       </Animated.View>
 
@@ -62,7 +73,11 @@ const CreditCard = ({
           { backfaceVisibility: "hidden", position: "absolute", top: 0 },
         ]}
       >
-        <CreditCardBack cardCvv={cardCvv} number={number} />
+        <CreditCardBack
+          cardCvv={cardCvv}
+          number={number}
+          backgroundImage={backgroundImage}
+        />
       </Animated.View>
     </View>
   );
