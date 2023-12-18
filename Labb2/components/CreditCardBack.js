@@ -8,6 +8,7 @@ const CreditCardBack = ({ cardCvv, number, backgroundImage }) => {
   return (
     <View style={styles.cardContainer}>
       <ImageBackground source={backgroundImage} style={styles.cardImage}>
+        <View style={styles.darkOverlay} />
         <View style={styles.blackStrip}></View> {/* Black strip */}
         <Text style={styles.label}>CVV</Text>
         <View style={styles.cvvField}>
@@ -43,6 +44,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
+  },
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust the opacity as needed
   },
   blackStrip: {
     position: "absolute",
