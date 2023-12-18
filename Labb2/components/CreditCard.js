@@ -13,66 +13,61 @@ const CreditCard = ({
   focusField,
   setFocusedField,
 }) => {
-  const flipAnim = useRef(new Animated.Value(0)).current; // 0 is unflipped, 180 is flipped
+  // useRef: to persist the flip animation value without causing re-renders
+  // 0 = front of the card, 1 = back of the card
+  const flipAnim = useRef(new Animated.Value(0)).current;
   const [backgroundImage, setBackgroundImage] = useState(null);
 
+  // Randomize background image on component mount
   useEffect(() => {
-    // Assuming you have images from 1.jpeg to 5.jpeg for example
     const totalImages = 25;
-    const randomImageNumber = Math.floor(Math.random() * totalImages) + 1; // Generate a random number between 1 and totalImages
+    const randomImageNumber = Math.floor(Math.random() * totalImages) + 1;
     const randomImagePath = require(`../assets/${randomImageNumber}.jpeg`);
-
     setBackgroundImage(randomImagePath);
   }, []);
 
+  // Animate card flip when 'isFlipped' changes
   useEffect(() => {
     Animated.timing(flipAnim, {
-      toValue: isFlipped ? 1 : 0, // Range from 0 to 1 for flipping
-      duration: 700, // Increase duration for slower flip
+      // 180 degrees for flip to back, 0 for front
+      toValue: isFlipped ? 180 : 0,
+      duration: 700,
       useNativeDriver: true,
     }).start();
   }, [isFlipped]);
 
-  const frontInterpolate = flipAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ["0deg", "90deg", "180deg"],
+  // Style for card flip animation
+  const getFlipStyle = (isBack) => ({
+    transform: [
+      { perspective: 1000 }, // Perspective for 3D effect
+      {
+        rotateY: flipAnim.interpolate({
+          inputRange: [0, 180],
+          outputRange: isBack ? ["180deg", "360deg"] : ["0deg", "180deg"],
+        }),
+      },
+    ],
+    backfaceVisibility: "hidden",
+    position: isBack ? "absolute" : "relative",
   });
-
-  const backInterpolate = flipAnim.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: ["180deg", "270deg", "360deg"],
-  });
-
-  const frontAnimatedStyle = {
-    transform: [{ perspective: 1000 }, { rotateY: frontInterpolate }],
-  };
-
-  const backAnimatedStyle = {
-    transform: [{ perspective: 1000 }, { rotateY: backInterpolate }],
-  };
 
   return (
     <View>
-      <Animated.View
-        style={[frontAnimatedStyle, { backfaceVisibility: "hidden" }]}
-      >
+      {/* Front of the card */}
+      <Animated.View style={getFlipStyle(false)}>
         <CreditCardFront
           number={number}
           name={name}
           cardMonth={cardMonth}
-          cardYear={cardYear} /* other props */
+          cardYear={cardYear}
           focusField={focusField}
           setFocusedField={setFocusedField}
           backgroundImage={backgroundImage}
         />
       </Animated.View>
 
-      <Animated.View
-        style={[
-          backAnimatedStyle,
-          { backfaceVisibility: "hidden", position: "absolute", top: 0 },
-        ]}
-      >
+      {/* Back of the card */}
+      <Animated.View style={getFlipStyle(true)}>
         <CreditCardBack
           cardCvv={cardCvv}
           number={number}
