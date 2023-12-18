@@ -23,6 +23,7 @@ const CreditCardFront = ({
   return (
     <View style={styles.cardContainer}>
       <ImageBackground source={backgroundImage} style={styles.cardImage}>
+        <View style={styles.darkOverlay} />
         <View style={styles.cardTop}>
           <Image
             source={require("../assets/chip.png")}
@@ -100,6 +101,10 @@ const styles = StyleSheet.create({
     height: "100%",
     padding: 20,
     justifyContent: "space-between", // Align children vertically
+  },
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust the opacity as needed
   },
   cardTop: {
     flexDirection: "row",
