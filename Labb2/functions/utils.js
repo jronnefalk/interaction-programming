@@ -54,8 +54,10 @@ export const getCardTypeImage = (number) => {
     return require("../assets/mastercard.png"); // MasterCard
   } else if (/^3[47]/.test(number)) {
     return require("../assets/amex.png"); // American Express
-  } else if (/^6(?:011|5)/.test(number)) {
+  } else if (/^6011/.test(number)) {
     return require("../assets/discover.png"); // Discover
+  } else if (/^9792/.test(number)) {
+    return require("../assets/troy.png"); // Troy
   }
 
   return require("../assets/visa.png"); // Default card image
