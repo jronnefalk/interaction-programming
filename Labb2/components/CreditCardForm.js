@@ -167,15 +167,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3, // Increased shadow opacity for a stronger shadow
+    shadowOpacity: 0.3,
     shadowRadius: 50,
     elevation: 10,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    width: "95%",
     maxWidth: 500,
-    position: "relative", // Added for positioning the CreditCardView
   },
   input: {
     height: 40,

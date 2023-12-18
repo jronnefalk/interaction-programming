@@ -28,35 +28,38 @@ export default function App() {
       value={{ setFocusedField: handleSetFocusedField }}
     >
       <View style={styles.body}>
-        <View style={styles.creditCardContainer}>
-          <CreditCard
-            number={formatCardNumber(cardNumber)}
-            name={cardName}
-            cardMonth={cardMonth}
-            cardYear={cardYear}
-            cardCvv={cardCvv}
-            isFlipped={isFlipped} // Pass the isFlipped state
-            focusField={focusField}
-          />{" "}
+        <View style={styles.container}>
+          <View style={styles.cardContainer}>
+            <CreditCard
+              number={formatCardNumber(cardNumber)}
+              name={cardName}
+              cardMonth={cardMonth}
+              cardYear={cardYear}
+              cardCvv={cardCvv}
+              isFlipped={isFlipped} // Pass the isFlipped state
+              focusField={focusField}
+            />{" "}
+          </View>
+
+          <View style={styles.formContainer}>
+            <CreditCardForm
+              cardNumber={cardNumber}
+              setCardNumber={setCardNumber}
+              cardName={cardName}
+              setCardName={setCardName}
+              cardMonth={cardMonth}
+              setCardMonth={setCardMonth}
+              cardYear={cardYear}
+              setCardYear={setCardYear}
+              cardCvv={cardCvv}
+              setCardCvv={setCardCvv}
+              handleFlip={handleFlip} // Pass setIsFlipped to control the flip
+              focusField={focusField}
+              setFocusedField={handleSetFocusedField}
+            />{" "}
+          </View>
         </View>
 
-        <View style={styles.formContainer}>
-          <CreditCardForm
-            cardNumber={cardNumber}
-            setCardNumber={setCardNumber}
-            cardName={cardName}
-            setCardName={setCardName}
-            cardMonth={cardMonth}
-            setCardMonth={setCardMonth}
-            cardYear={cardYear}
-            setCardYear={setCardYear}
-            cardCvv={cardCvv}
-            setCardCvv={setCardCvv}
-            handleFlip={handleFlip} // Pass setIsFlipped to control the flip
-            focusField={focusField}
-            setFocusedField={handleSetFocusedField}
-          />{" "}
-        </View>
         <StatusBar style="auto" />
       </View>
     </CreditCardContext.Provider>
@@ -68,17 +71,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ddeefc",
     alignItems: "center",
-    justifyContent: "space-around", // Adjust the layout of child components
-    padding: 20,
+    justifyContent: "flex-start", // Adjust the layout of child components
   },
-  creditCardContainer: {
-    position: "absolute", // Use 'absolute' if you want to position it specifically
-    zIndex: 1, // Ensure card is above the form
-    // Other styling for credit card container
-    top: 10,
+  container: {
+    width: "100%",
+    maxWidth: 700,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative", // Added to position children absolutely within this container
+    top: 20,
+  },
+  cardContainer: {
+    position: "absolute",
+    top: 10, // Adjust this value to control vertical overlap
+    zIndex: 2, // Card on top
   },
   formContainer: {
-    zIndex: 0, // Ensure form is below the card or vice versa
-    // Other styling for form container
+    position: "absolute",
+    top: "40%", // Adjust this value to control vertical overlap
+    zIndex: 1, // Form below card
+    width: "90%",
+    top: 120,
   },
 });

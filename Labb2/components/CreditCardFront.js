@@ -85,14 +85,11 @@ const aspectRatio = cardHeight / cardWidth;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    position: "absolute",
     alignSelf: "center",
-    marginBottom: 480,
     width: 350,
     height: 350 * aspectRatio,
     borderRadius: 10,
     overflow: "hidden",
-    zIndex: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.6,
