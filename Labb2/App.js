@@ -3,7 +3,6 @@ import { View, StyleSheet, StatusBar } from "react-native";
 import CreditCardForm from "./components/CreditCardForm";
 import CreditCard from "./components/CreditCard";
 import { formatCardNumber } from "./functions/utils";
-import CreditCardContext from "./components/CreditCardContext";
 
 export default function App() {
   const [cardNumber, setCardNumber] = useState("");
@@ -14,55 +13,52 @@ export default function App() {
   const [isFlipped, setIsFlipped] = useState(false); // Define state for flipping
   const [focusField, setFocusedField] = useState(null);
 
-  const handleSetFocusedField = useCallback((focusField) => {
-    setFocusedField(focusField);
+  // Function to handle flipping of the card
+  const handleFlip = useCallback((flipStatus) => {
+    setIsFlipped(flipStatus);
   }, []);
 
-  // Function to handle flipping of the card
-  const handleFlip = (flipStatus) => {
-    setIsFlipped(flipStatus);
-  };
+  // Function to handle setting focused field
+  const handleSetFocusedField = useCallback((field) => {
+    setFocusedField(field);
+  }, []);
 
   return (
-    <CreditCardContext.Provider
-      value={{ setFocusedField: handleSetFocusedField }}
-    >
-      <View style={styles.body}>
-        <View style={styles.container}>
-          <View style={styles.cardContainer}>
-            <CreditCard
-              number={formatCardNumber(cardNumber)}
-              name={cardName}
-              cardMonth={cardMonth}
-              cardYear={cardYear}
-              cardCvv={cardCvv}
-              isFlipped={isFlipped} // Pass the isFlipped state
-              focusField={focusField}
-            />{" "}
-          </View>
-
-          <View style={styles.formContainer}>
-            <CreditCardForm
-              cardNumber={cardNumber}
-              setCardNumber={setCardNumber}
-              cardName={cardName}
-              setCardName={setCardName}
-              cardMonth={cardMonth}
-              setCardMonth={setCardMonth}
-              cardYear={cardYear}
-              setCardYear={setCardYear}
-              cardCvv={cardCvv}
-              setCardCvv={setCardCvv}
-              handleFlip={handleFlip} // Pass setIsFlipped to control the flip
-              focusField={focusField}
-              setFocusedField={handleSetFocusedField}
-            />{" "}
-          </View>
+    <View style={styles.body}>
+      <View style={styles.container}>
+        <View style={styles.cardContainer}>
+          <CreditCard
+            number={formatCardNumber(cardNumber)}
+            name={cardName}
+            cardMonth={cardMonth}
+            cardYear={cardYear}
+            cardCvv={cardCvv}
+            isFlipped={isFlipped}
+            focusField={focusField}
+            setFocusedField={handleSetFocusedField}
+          />
         </View>
 
-        <StatusBar style="auto" />
+        <View style={styles.formContainer}>
+          <CreditCardForm
+            cardNumber={cardNumber}
+            setCardNumber={setCardNumber}
+            cardName={cardName}
+            setCardName={setCardName}
+            cardMonth={cardMonth}
+            setCardMonth={setCardMonth}
+            cardYear={cardYear}
+            setCardYear={setCardYear}
+            cardCvv={cardCvv}
+            setCardCvv={setCardCvv}
+            handleFlip={handleFlip}
+            focusField={focusField}
+            setFocusedField={handleSetFocusedField}
+          />
+        </View>
       </View>
-    </CreditCardContext.Provider>
+      <StatusBar style="auto" />
+    </View>
   );
 }
 

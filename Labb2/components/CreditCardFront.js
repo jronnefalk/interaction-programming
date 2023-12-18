@@ -1,11 +1,10 @@
-import { React, useContext } from "react";
+import React from "react";
 import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
 import {
   formatCardNumber,
   formatExpiryDate,
   getCardTypeImage,
 } from "../functions/utils";
-import CreditCardContext from "./CreditCardContext";
 
 const CreditCardFront = ({
   number,
@@ -13,11 +12,10 @@ const CreditCardFront = ({
   cardMonth,
   cardYear,
   focusField,
-  expiry,
+  setFocusedField,
   backgroundImage,
 }) => {
   const displayNumber = formatCardNumber(number) || "#### #### #### ####";
-  const { setFocusedField } = useContext(CreditCardContext);
   const displayExpiry = formatExpiryDate(cardMonth, cardYear);
 
   return (

@@ -1,4 +1,4 @@
-import { React, useContext, useRef, useEffect } from "react";
+import { React, useRef, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { formatInputCardNumber, formatCVVNumber } from "../functions/utils";
-import CreditCardContext from "./CreditCardContext";
 
 const CreditCardForm = ({
   cardNumber,
@@ -42,13 +41,9 @@ const CreditCardForm = ({
   const years = Array.from({ length: 10 }, (_, i) =>
     (currentYear + i).toString()
   );
-  const { setFocusedField } = useContext(CreditCardContext);
   const numberInputRef = useRef(null);
   const nameInputRef = useRef(null);
   const monthPickerRef = useRef(null);
-
-  const expiryFocusedStyle =
-    focusField === "expiry" ? styles.highlightedInput : {};
 
   // Use effect to handle focus
   useEffect(() => {
@@ -107,7 +102,7 @@ const CreditCardForm = ({
       />
 
       <View style={styles.row}>
-        <View style={[styles.dateContainer, expiryFocusedStyle]}>
+        <View style={[styles.dateContainer]}>
           <Text style={styles.label}>Expiration Date</Text>
           <View style={styles.dateInputs}>
             <Picker
