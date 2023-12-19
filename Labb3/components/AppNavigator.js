@@ -10,7 +10,6 @@ const AppNavigator = () => (
     <Stack.Navigator>
       <Stack.Screen name="RepositoryList" component={RepositoryList} />
       <Stack.Screen name="RepositoryDetails" component={RepositoryDetails} />
-      {/* Other screens... */}
     </Stack.Navigator>
   </NavigationContainer>
 );
