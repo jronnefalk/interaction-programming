@@ -9,7 +9,7 @@ const CreditCardBack = ({ cardCvv, number, backgroundImage }) => {
     <View style={styles.cardContainer}>
       <ImageBackground source={backgroundImage} style={styles.cardImage}>
         <View style={styles.darkOverlay} />
-        <View style={styles.blackStrip}></View> {/* Black strip */}
+        <View style={styles.blackStrip}></View>
         <Text style={styles.label}>CVV</Text>
         <View style={styles.cvvField}>
           <Text style={styles.cvvText}>{displayCVV}</Text>
@@ -20,8 +20,8 @@ const CreditCardBack = ({ cardCvv, number, backgroundImage }) => {
   );
 };
 
-const cardWidth = 85.6; // in millimeters
-const cardHeight = 53.98; // in millimeters
+const cardWidth = 85.6; // millimeter
+const cardHeight = 53.98; // millimeter
 
 // Calculate the aspect ratio
 const aspectRatio = cardHeight / cardWidth;
@@ -47,11 +47,11 @@ const styles = StyleSheet.create({
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust the opacity as needed
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   blackStrip: {
     position: "absolute",
-    top: 22, // adjust according to your design
+    top: 22,
     left: 0,
     width: "100%",
     height: 40,
@@ -60,20 +60,20 @@ const styles = StyleSheet.create({
   },
   cvvField: {
     position: "absolute",
-    top: 100, // Adjust this value to position the CVV field at a fixed location
-    right: 12, // Adjust this value to position the CVV field at a fixed location
+    top: 100,
+    right: 12,
     width: 320,
     height: 30,
     backgroundColor: "white",
     justifyContent: "center",
     borderRadius: 4,
-    padding: 5, // Add padding inside the field
+    padding: 5,
   },
   cvvText: {
     color: "black",
     fontSize: 20,
-    textAlign: "right", // Align text to the right
-    width: "100%", // Ensure the text container takes the full width of cvvField
+    textAlign: "right",
+    width: "100%",
   },
   cardTypeImage: {
     position: "absolute",
@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Source Code Pro",
     position: "absolute",
-    top: 80, // Adjust this value as needed to position above the CVV field
-    right: 30, // Adjust this value to align to the right of the CVV field
+    top: 80,
+    right: 30,
   },
 });
 

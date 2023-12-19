@@ -16,17 +16,18 @@ const CreditCard = ({
   // useRef: to persist the flip animation value without causing re-renders
   // 0 = front of the card, 1 = back of the card
   const flipAnim = useRef(new Animated.Value(0)).current;
+
+  // Randomize background image
   const [backgroundImage, setBackgroundImage] = useState(null);
 
-  // Randomize background image on component mount
   useEffect(() => {
     const totalImages = 25;
     const randomImageNumber = Math.floor(Math.random() * totalImages) + 1;
     const randomImagePath = require(`../assets/${randomImageNumber}.jpeg`);
     setBackgroundImage(randomImagePath);
-  }, []);
+  }, []); // [] -> Happens only the first time (page refresh)
 
-  // Animate card flip when 'isFlipped' changes
+  // Animate card flip when 'isFlipped' is changed
   useEffect(() => {
     Animated.timing(flipAnim, {
       // 180 degrees for flip to back, 0 for front
@@ -34,12 +35,12 @@ const CreditCard = ({
       duration: 700,
       useNativeDriver: true,
     }).start();
-  }, [isFlipped]);
+  }, [isFlipped]); // [isFlipped] -> happens when isFlipped changes
 
   // Style for card flip animation
-  const getFlipStyle = (isBack) => ({
+  const flipStyle = (isBack) => ({
     transform: [
-      { perspective: 1000 }, // Perspective for 3D effect
+      { perspective: 1000 }, // For 3D effect
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 180],
@@ -54,7 +55,7 @@ const CreditCard = ({
   return (
     <View>
       {/* Front of the card */}
-      <Animated.View style={getFlipStyle(false)}>
+      <Animated.View style={flipStyle(false)}>
         <CreditCardFront
           number={number}
           name={name}
@@ -67,7 +68,7 @@ const CreditCard = ({
       </Animated.View>
 
       {/* Back of the card */}
-      <Animated.View style={getFlipStyle(true)}>
+      <Animated.View style={flipStyle(true)}>
         <CreditCardBack
           cardCvv={cardCvv}
           number={number}

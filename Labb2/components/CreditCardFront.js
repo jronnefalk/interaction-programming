@@ -76,10 +76,9 @@ const CreditCardFront = ({
   );
 };
 
-const cardWidth = 85.6; // in millimeters
-const cardHeight = 53.98; // in millimeters
+const cardWidth = 85.6;
+const cardHeight = 53.98;
 
-// Calculate the aspect ratio
 const aspectRatio = cardHeight / cardWidth;
 
 const styles = StyleSheet.create({
@@ -98,28 +97,26 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     padding: 20,
-    justifyContent: "space-between", // Align children vertically
+    justifyContent: "space-between",
   },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust the opacity as needed
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   cardTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // ... additional styling as needed
   },
   chipImage: {
-    // Style for chip image
-    width: 50, // Adjust as necessary
-    height: 40, // Adjust as necessary
+    width: 50,
+    height: 40,
     borderRadius: 8,
   },
   cardTypeImage: {
-    width: 70, // You might need to adjust this
-    height: 50, // You might need to adjust this
-    resizeMode: "contain", // This will ensure the logo fits within the dimensions without being cut off
+    width: 70,
+    height: 50,
+    resizeMode: "contain", // logo fits within the dimensions without being cut off
   },
   cardNumber: {
     fontSize: 22,
@@ -134,11 +131,11 @@ const styles = StyleSheet.create({
   },
   cardHolder: {
     justifyContent: "flex-start",
-    width: "70%", // Adjust this value as needed
+    width: "70%",
   },
   expiry: {
     justifyContent: "flex-end",
-    width: "30%", // Adjust this value as needed
+    width: "30%",
   },
   label: {
     fontSize: 10,

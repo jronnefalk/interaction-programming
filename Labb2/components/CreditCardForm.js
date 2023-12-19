@@ -23,6 +23,7 @@ const CreditCardForm = ({
   handleFlip,
   focusField,
 }) => {
+  // Array of months for expiration date picker
   const months = [
     "01",
     "02",
@@ -37,15 +38,19 @@ const CreditCardForm = ({
     "11",
     "12",
   ];
+
+  // Generate array of years for the expiration date picker
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, i) =>
     (currentYear + i).toString()
   );
+
+  // Refs to manage focus for different input fields
   const numberInputRef = useRef(null);
   const nameInputRef = useRef(null);
   const monthPickerRef = useRef(null);
 
-  // Use effect to handle focus
+  // Use effect to handle focus/highlight when focusField changes
   useEffect(() => {
     if (focusField === "number") {
       numberInputRef.current?.focus();
@@ -53,10 +58,10 @@ const CreditCardForm = ({
       nameInputRef.current?.focus();
     } else if (focusField === "expiry") {
       monthPickerRef.current?.focus();
-      // Alternatively, focus the year picker or a combined expiry field
     }
   }, [focusField]);
 
+  // Form submission
   const handleSubmit = () => {
     console.log("Form submitted", {
       cardNumber,
@@ -73,9 +78,8 @@ const CreditCardForm = ({
     setCardNumber(formattedNumberForInput);
   };
 
-  // Use the formatCVVNumber from utils.js to handle CVV input changes
+  // Use formatCVVNumber from utils to handle CVV input changes
   const handleCvvChange = (text) => {
-    // Use formatCVVNumber to sanitize the input
     const sanitizedCvv = formatCVVNumber(text);
     setCardCvv(sanitizedCvv);
   };
@@ -111,7 +115,7 @@ const CreditCardForm = ({
               style={[styles.input, styles.pickerInput]}
               onValueChange={setCardMonth}
             >
-              <Picker.Item label="Month" value="" /> {/* Placeholder item */}
+              <Picker.Item label="Month" value="" />
               {months.map((month) => (
                 <Picker.Item key={month} label={month} value={month} />
               ))}
@@ -122,7 +126,7 @@ const CreditCardForm = ({
               style={[styles.input, styles.pickerInput]}
               onValueChange={setCardYear}
             >
-              <Picker.Item label="Year" value="" /> {/* Placeholder item */}
+              <Picker.Item label="Year" value="" />
               {years.map((year) => (
                 <Picker.Item key={year} label={year} value={year} />
               ))}
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
     width: "100%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3, // Increased shadow opacity for a stronger shadow
+    shadowOpacity: 0.3,
     shadowRadius: 30,
   },
   buttonText: {
