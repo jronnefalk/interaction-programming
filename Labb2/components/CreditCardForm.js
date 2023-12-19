@@ -72,6 +72,7 @@ const CreditCardForm = ({
     });
   };
 
+  // Handle changes in the card number input field
   const handleCardNumberChange = (text) => {
     const cleaned = text.replace(/\D+/g, "").substring(0, 16);
     const formattedNumberForInput = formatInputCardNumber(cleaned);
@@ -80,8 +81,8 @@ const CreditCardForm = ({
 
   // Use formatCVVNumber from utils to handle CVV input changes
   const handleCvvChange = (text) => {
-    const sanitizedCvv = formatCVVNumber(text);
-    setCardCvv(sanitizedCvv);
+    const cleanedCvv = formatCVVNumber(text);
+    setCardCvv(cleanedCvv);
   };
 
   return (
