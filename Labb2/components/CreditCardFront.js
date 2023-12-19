@@ -15,6 +15,7 @@ const CreditCardFront = ({
   setFocusedField,
   backgroundImage,
 }) => {
+  
   const displayNumber = formatCardNumber(number) || "#### #### #### ####";
   const displayExpiry = formatExpiryDate(cardMonth, cardYear);
 
