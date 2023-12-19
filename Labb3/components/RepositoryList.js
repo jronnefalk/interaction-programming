@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useQuery } from "@apollo/client";
 import { GET_TRENDING_REPOSITORIES } from "./queries";
 import LanguageSelector from "./LanguageSelector";
 
-const RepositoryList = () => {
+const RepositoryList = ({ navigation }) => {
+  // Ensure navigation is received via props
   const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
   const { loading, error, data } = useQuery(GET_TRENDING_REPOSITORIES, {
     variables: { queryString: `language:${selectedLanguage} stars:>10000` },
@@ -13,7 +20,17 @@ const RepositoryList = () => {
   const renderItem = ({ item }) => {
     const repo = item.node;
     return (
-      <View style={styles.card}>
+      // Wrap the card in a TouchableOpacity to handle press action
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => {
+          // Navigate to the details page with the necessary repo information
+          navigation.navigate("RepositoryDetails", {
+            name: repo.name,
+            owner: repo.owner.login,
+          });
+        }}
+      >
         <Text style={styles.title}>{repo.name}</Text>
         <Text>{repo.owner.login}</Text>
         <Text style={styles.description}>{repo.description}</Text>
@@ -21,7 +38,7 @@ const RepositoryList = () => {
           <Text>Forks: {repo.forks?.totalCount ?? "N/A"}</Text>
           <Text>Stars: {repo.stargazers?.totalCount ?? "N/A"}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -34,6 +51,8 @@ const RepositoryList = () => {
         data={data?.search.edges}
         keyExtractor={(edge) => edge.node.id}
         renderItem={renderItem}
+        // Add padding at the bottom to avoid overlapping with the language selector
+        contentContainerStyle={{ paddingBottom: 60 }}
       />
       <View style={styles.languageSelector}>
         <LanguageSelector

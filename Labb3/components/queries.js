@@ -26,3 +26,33 @@ export const GET_TRENDING_REPOSITORIES = gql`
     }
   }
 `;
+
+export const GET_REPOSITORY_DETAILS = gql`
+  query GetRepositoryDetails($name: String!, $owner: String!) {
+    repository(name: $name, owner: $owner) {
+      name
+      description
+      stargazers {
+        totalCount
+      }
+      forks {
+        totalCount
+      }
+      licenseInfo {
+        name
+      }
+      defaultBranchRef {
+        target {
+          ... on Commit {
+            history {
+              totalCount
+            }
+          }
+        }
+      }
+      refs(refPrefix: "refs/heads/") {
+        totalCount
+      }
+    }
+  }
+`;
