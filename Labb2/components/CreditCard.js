@@ -44,6 +44,8 @@ const CreditCard = ({
       {
         rotateY: flipAnim.interpolate({
           inputRange: [0, 180],
+          // Making the back face visible after 180 degrees
+          // and front visible from 0-180 degress
           outputRange: isBack ? ["180deg", "360deg"] : ["0deg", "180deg"],
         }),
       },

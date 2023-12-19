@@ -1,8 +1,8 @@
 export const formatCardNumber = (number) => {
-  let cleanedNumber = number.replace(/\s/g, ""); // Remove any spaces
+  let cleanedNumber = number.replace(/\s/g, ""); // Remove spaces
 
   if (cleanedNumber.startsWith("34") || cleanedNumber.startsWith("37")) {
-    // American Express card format (15 digits: 4-6-5)
+    // American Express card format (15 digits)
     let middleSection = cleanedNumber.substring(4, 10).padEnd(6, "#");
     let lastSection = cleanedNumber
       .substring(10, 15)
@@ -16,7 +16,7 @@ export const formatCardNumber = (number) => {
     ];
     return amexParts.join(" ");
   } else {
-    // Other card format (16 digits: 4-4-4-4)
+    // Other card format (16 digits)
     cleanedNumber = cleanedNumber.padEnd(16, "#");
     let parts = [
       cleanedNumber.substring(0, 4),

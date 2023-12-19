@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
-import { getCardTypeImage, formatCVVNumber } from "../functions/utils";
+import { getCardTypeImage } from "../functions/utils";
 
 const CreditCardBack = ({ cardCvv, number, backgroundImage }) => {
   const displayCVV = "*".repeat(cardCvv.length);
