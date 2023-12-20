@@ -9,17 +9,30 @@ export const GET_TRENDING_REPOSITORIES = gql`
             id
             name
             description
-            owner {
-              login
-            }
             stargazers {
               totalCount
             }
-            url
-            primaryLanguage {
-              name
+            watchers {
+              totalCount
             }
-            createdAt
+            issues(states: OPEN) {
+              totalCount
+            }
+            pullRequests(states: OPEN) {
+              totalCount
+            }
+            languages(first: 5) {
+              edges {
+                node {
+                  name
+                }
+              }
+            }
+            licenseInfo {
+              key
+              name
+              spdxId
+            }
           }
         }
       }

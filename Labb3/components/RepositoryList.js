@@ -1,82 +1,178 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useState } from "react"; // Import useState here
+import {
+  Pressable,
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
+} from "react-native";
 import { useQuery } from "@apollo/client";
-import { GET_TRENDING_REPOSITORIES } from "./queries";
-import LanguageSelector from "./LanguageSelector";
+import { GET_TRENDING_REPOSITORIES } from "../queries/Repositoryqueries";
+import RNPickerSelect from "react-native-picker-select";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-const RepositoryList = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState("JavaScript");
+const RepositoryList = ({ navigation }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState("");
   const { loading, error, data } = useQuery(GET_TRENDING_REPOSITORIES, {
-    variables: { queryString: `language:${selectedLanguage} stars:>10000` },
+    variables: {
+      queryString: selectedLanguage
+        ? `language:${selectedLanguage} stars:>10000`
+        : "stars:>10000",
+    },
   });
 
+  if (loading) return <Text>Loading...</Text>;
+  if (error) {
+    console.error("Error fetching data: ", error);
+    return <Text>Error fetching data</Text>;
+  }
+
+  if (data && data.search.edges.length > 0) {
+    console.log("First Repository Data:", data.search.edges[0].node);
+  }
   const renderItem = ({ item }) => {
-    const repo = item.node;
+    const node = item.node; // Access the node property of each item
     return (
-      <View style={styles.card}>
-        <Text style={styles.title}>{repo.name}</Text>
-        <Text>{repo.owner.login}</Text>
-        <Text style={styles.description}>{repo.description}</Text>
-        <View style={styles.stats}>
-          <Text>Forks: {repo.forks?.totalCount ?? "N/A"}</Text>
-          <Text>Stars: {repo.stargazers?.totalCount ?? "N/A"}</Text>
+      <Pressable
+        style={styles.repositoryContainer}
+        onPress={() =>
+          navigation.navigate("RepositoryDetail", { repository: node })
+        }
+      >
+        <View style={styles.headerContainer}>
+          <Text style={styles.repositoryTitle}>{node.name}</Text>
+          <View style={styles.iconContainer}>
+            <Icon name="star" size={20} color="#FFD700" />
+            <Text style={styles.iconText}>
+              {node.stargazers?.totalCount || 0}
+            </Text>
+          </View>
         </View>
-      </View>
+        <Text style={styles.repositoryDescription}>{node.description}</Text>
+      </Pressable>
     );
   };
-
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
-
   return (
-    <View style={styles.container}>
+    <View style={styles.listContainer}>
+      <Image
+        source={require("../assets/titleimg.png")}
+        style={styles.titleImage}
+        resizeMode="contain"
+      />
+      <RNPickerSelect
+        value={selectedLanguage}
+        onValueChange={(value) => setSelectedLanguage(value)}
+        items={[
+          { label: "Top Overall", value: "" },
+          { label: "JavaScript", value: "JavaScript" },
+          { label: "TypeScript", value: "TypeScript" },
+          { label: "Java", value: "Java" },
+          { label: "Python", value: "Python" },
+          { label: "C", value: "C" },
+          { label: "C++", value: "C++" },
+          { label: "CSS", value: "CSS" },
+          { label: "C#", value: "C#" },
+          { label: "Swift", value: "Swift" },
+          { label: "Rust", value: "Rust" },
+          { label: "Go", value: "Go" },
+          { label: "Ruby", value: "Ruby" },
+          { label: "PHP", value: "PHP" },
+          { label: "Web", value: "Web" },
+        ]}
+        style={{
+          inputIOS: styles.dropdownInput,
+          inputAndroid: styles.dropdownInput,
+          iconContainer: styles.iconContainer,
+          placeholder: { color: "737C8C" }, // Customize placeholder color
+        }}
+        useNativeAndroidPickerStyle={false}
+        Icon={() => {
+          return <Icon name="arrow-down" size={20} color="white" />;
+        }}
+      />
       <FlatList
         data={data?.search.edges}
-        keyExtractor={(edge) => edge.node.id}
         renderItem={renderItem}
+        keyExtractor={(item) => item.node.id}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
       />
-      <View style={styles.languageSelector}>
-        <LanguageSelector
-          selectedLanguage={selectedLanguage}
-          onLanguageChange={setSelectedLanguage}
-        />
-      </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
-  container: {
+  listContainer: {
     flex: 1,
-    paddingTop: 20,
+    backgroundColor: "#737C8C",
   },
-  card: {
-    backgroundColor: "#f0e1ec",
-    borderRadius: 6,
-    padding: 16,
-    marginHorizontal: 16,
-    marginVertical: 8,
+  row: {
+    flex: 1,
+    justifyContent: "space-around",
   },
-  title: {
+  repositoryContainer: {
+    backgroundColor: "#8F96A3",
+    borderRadius: 15,
+    padding: 15,
+    margin: 8,
+    flex: 1 / 2, // Each item takes half the width of the screen
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6, // Missing comma added here
+  },
+  repositoryInfo: {
+    fontSize: 14,
+    color: "#333",
+  },
+  pickerContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#cccccc",
+    borderRadius: 5,
+    margin: 10,
+    backgroundColor: "#ffffff",
+  },
+  pickerText: {
+    color: "#333333",
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  iconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexShrink: 1,
+  },
+  iconText: {
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  titleImage: {
+    width: "70%", // Adjust as needed
+    height: 70, // Adjust as needed
+    marginTop: 20, // Adjust as needed
+    marginBottom: 20,
+    alignSelf: "center",
+  },
+  dropdownInput: {
+    fontSize: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: "gray", // Border color
+    borderRadius: 4,
+    color: "white", // Text color
+    paddingRight: 30, // to ensure the text is never behind the icon
+    backgroundColor: "#737C8C", // Background color
+  },
+  repositoryTitle: {
     fontSize: 16,
     fontWeight: "bold",
   },
-  description: {
-    fontSize: 14,
-    color: "gray",
-    marginVertical: 8,
-  },
-  stats: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  languageSelector: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderColor: "#e0e0e0",
-    backgroundColor: "white",
-  },
 });
-
 export default RepositoryList;

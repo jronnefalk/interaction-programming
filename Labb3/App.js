@@ -1,13 +1,17 @@
 import React from "react";
 import { ApolloProvider } from "@apollo/client";
-import client from "./components/ApolloClient";
-import AppNavigator from "./components/AppNavigator";
+import client from "./ApolloClient";
+import { NavigationContainer } from "@react-navigation/native";
+import AppNavigator from "./navigation/AppNavigator";
+import * as Font from "expo-font";
 
 const App = () => {
   return (
-    <ApolloProvider client={client}>
-      <AppNavigator />
-    </ApolloProvider>
+    <NavigationContainer>
+      <ApolloProvider client={client}>
+        <AppNavigator />
+      </ApolloProvider>
+    </NavigationContainer>
   );
 };
 
