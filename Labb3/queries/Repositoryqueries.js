@@ -33,6 +33,18 @@ export const GET_TRENDING_REPOSITORIES = gql`
               name
               spdxId
             }
+            refs(refPrefix: "refs/heads/", first: 100) {
+              totalCount
+            }
+            defaultBranchRef {
+              target {
+                ... on Commit {
+                  history(first: 0) {
+                    totalCount
+                  }
+                }
+              }
+            }
           }
         }
       }

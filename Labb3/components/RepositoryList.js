@@ -29,10 +29,23 @@ const RepositoryList = ({ navigation }) => {
   }
 
   if (data && data.search.edges.length > 0) {
-    console.log("First Repository Data:", data.search.edges[0].node);
   }
+  const renderLanguages = (languages) => {
+    return (
+      <FlatList
+        data={languages.edges}
+        horizontal
+        renderItem={({ item }) => (
+          <Text style={styles.languageText}>{item.node.name}</Text>
+        )}
+        keyExtractor={(item, index) => `lang-${index}`}
+        style={styles.languagesList}
+      />
+    );
+  };
+
   const renderItem = ({ item }) => {
-    const node = item.node; // Access the node property of each item
+    const node = item.node;
     return (
       <Pressable
         style={styles.repositoryContainer}
@@ -50,6 +63,9 @@ const RepositoryList = ({ navigation }) => {
           </View>
         </View>
         <Text style={styles.repositoryDescription}>{node.description}</Text>
+        {node.languages &&
+          node.languages.edges.length > 0 &&
+          renderLanguages(node.languages)}
       </Pressable>
     );
   };
@@ -87,10 +103,8 @@ const RepositoryList = ({ navigation }) => {
           placeholder: { color: "737C8C" }, // Customize placeholder color
         }}
         useNativeAndroidPickerStyle={false}
-        Icon={() => {
-          return <Icon name="arrow-down" size={20} color="white" />;
-        }}
       />
+
       <FlatList
         data={data?.search.edges}
         renderItem={renderItem}
@@ -114,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#8F96A3",
     borderRadius: 15,
     padding: 15,
-    margin: 8,
+    margin: 10,
     flex: 1 / 2, // Each item takes half the width of the screen
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -170,9 +184,36 @@ const styles = StyleSheet.create({
     paddingRight: 30, // to ensure the text is never behind the icon
     backgroundColor: "#737C8C", // Background color
   },
+  repositoryContainer: {
+    backgroundColor: "#8F96A3",
+    borderRadius: 15,
+    padding: 15,
+    margin: 8,
+    flex: 1 / 2, // Varje element tar hälften av skärmens bredd
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
+  },
   repositoryTitle: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "black", // Rubrik i svart
+  },
+  repositoryDescription: {
+    fontSize: 14,
+    color: "black", // Beskrivning i svart
+    marginTop: 5, // Lägg till utrymme ovanför beskrivningen
+  },
+  languageText: {
+    marginRight: 10,
+    color: "#c7cad1", // Språk i grått
+  },
+  languagesList: {
+    flexDirection: "row",
+    marginTop: 5, // Utrymme ovanför språklistan
+    marginBottom: 5, // Utrymme under språklistan
   },
 });
 export default RepositoryList;
