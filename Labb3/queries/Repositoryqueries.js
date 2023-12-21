@@ -21,7 +21,7 @@ export const GET_TRENDING_REPOSITORIES = gql`
             pullRequests(states: OPEN) {
               totalCount
             }
-            languages(first: 5) {
+            languages(first: 3) {
               edges {
                 node {
                   name

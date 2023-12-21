@@ -65,7 +65,7 @@ const RepositoryList = ({ navigation }) => {
       <FlatList
         data={data?.search.edges}
         renderItem={renderItem}
-        keyExtractor={(item) => item.node.id}
+        keyExtractor={(item) => `repository-${item.node.id}`} // Use the repository ID as the key
         numColumns={2}
         columnWrapperStyle={styles.row}
       />

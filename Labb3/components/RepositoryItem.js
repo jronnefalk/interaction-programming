@@ -11,7 +11,7 @@ const RepositoryItem = ({ repository, navigation }) => {
         renderItem={({ item }) => (
           <Text style={styles.languageText}>{item.node.name}</Text>
         )}
-        keyExtractor={(item, index) => `lang-${index}`}
+        keyExtractor={(item, index) => `lang-${item.node.name}-${index}`} // Generate a key based on language name and index
         style={styles.languagesList}
       />
     );
