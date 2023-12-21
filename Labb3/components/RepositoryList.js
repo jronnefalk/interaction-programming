@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, FlatList, Image } from "react-native";
 import { useQuery } from "@apollo/client";
 import { GET_TRENDING_REPOSITORIES } from "../queries/Repositoryqueries";
@@ -7,12 +7,23 @@ import RepositoryItem from "./RepositoryItem";
 
 const RepositoryList = ({ navigation }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [queryString, setQueryString] = useState("");
+
+  useEffect(() => {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const oneMonthAgoString = oneMonthAgo.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+
+    const languageQuery = selectedLanguage
+      ? `language:${selectedLanguage} `
+      : "";
+    const dateQuery = `created:>${oneMonthAgoString} `;
+
+    setQueryString(`${languageQuery}${dateQuery}stars:>100`);
+  }, [selectedLanguage]);
+
   const { loading, error, data } = useQuery(GET_TRENDING_REPOSITORIES, {
-    variables: {
-      queryString: selectedLanguage
-        ? `language:${selectedLanguage} stars:>10000`
-        : "stars:>10000",
-    },
+    variables: { queryString },
   });
 
   if (loading) return <Text>Loading...</Text>;
