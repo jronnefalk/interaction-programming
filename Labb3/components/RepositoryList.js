@@ -1,16 +1,9 @@
-import React, { useState } from "react"; // Import useState here
-import {
-  Pressable,
-  Text,
-  View,
-  StyleSheet,
-  FlatList,
-  Image,
-} from "react-native";
+import React, { useState } from "react";
+import { Text, View, StyleSheet, FlatList, Image } from "react-native";
 import { useQuery } from "@apollo/client";
 import { GET_TRENDING_REPOSITORIES } from "../queries/Repositoryqueries";
 import RNPickerSelect from "react-native-picker-select";
-import Icon from "react-native-vector-icons/FontAwesome";
+import RepositoryItem from "./RepositoryItem";
 
 const RepositoryList = ({ navigation }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -28,47 +21,10 @@ const RepositoryList = ({ navigation }) => {
     return <Text>Error fetching data</Text>;
   }
 
-  if (data && data.search.edges.length > 0) {
-  }
-  const renderLanguages = (languages) => {
-    return (
-      <FlatList
-        data={languages.edges}
-        horizontal
-        renderItem={({ item }) => (
-          <Text style={styles.languageText}>{item.node.name}</Text>
-        )}
-        keyExtractor={(item, index) => `lang-${index}`}
-        style={styles.languagesList}
-      />
-    );
-  };
+  const renderItem = ({ item }) => (
+    <RepositoryItem repository={item.node} navigation={navigation} />
+  );
 
-  const renderItem = ({ item }) => {
-    const node = item.node;
-    return (
-      <Pressable
-        style={styles.repositoryContainer}
-        onPress={() =>
-          navigation.navigate("RepositoryDetail", { repository: node })
-        }
-      >
-        <View style={styles.headerContainer}>
-          <Text style={styles.repositoryTitle}>{node.name}</Text>
-          <View style={styles.iconContainer}>
-            <Icon name="star" size={20} color="#FFD700" />
-            <Text style={styles.iconText}>
-              {node.stargazers?.totalCount || 0}
-            </Text>
-          </View>
-        </View>
-        <Text style={styles.repositoryDescription}>{node.description}</Text>
-        {node.languages &&
-          node.languages.edges.length > 0 &&
-          renderLanguages(node.languages)}
-      </Pressable>
-    );
-  };
   return (
     <View style={styles.listContainer}>
       <Image
@@ -76,35 +32,36 @@ const RepositoryList = ({ navigation }) => {
         style={styles.titleImage}
         resizeMode="contain"
       />
-      <RNPickerSelect
-        value={selectedLanguage}
-        onValueChange={(value) => setSelectedLanguage(value)}
-        items={[
-          { label: "Top Overall", value: "" },
-          { label: "JavaScript", value: "JavaScript" },
-          { label: "TypeScript", value: "TypeScript" },
-          { label: "Java", value: "Java" },
-          { label: "Python", value: "Python" },
-          { label: "C", value: "C" },
-          { label: "C++", value: "C++" },
-          { label: "CSS", value: "CSS" },
-          { label: "C#", value: "C#" },
-          { label: "Swift", value: "Swift" },
-          { label: "Rust", value: "Rust" },
-          { label: "Go", value: "Go" },
-          { label: "Ruby", value: "Ruby" },
-          { label: "PHP", value: "PHP" },
-          { label: "Web", value: "Web" },
-        ]}
-        style={{
-          inputIOS: styles.dropdownInput,
-          inputAndroid: styles.dropdownInput,
-          iconContainer: styles.iconContainer,
-          placeholder: { color: "737C8C" }, // Customize placeholder color
-        }}
-        useNativeAndroidPickerStyle={false}
-      />
-
+      <View style={styles.dropdownContainer}>
+        <RNPickerSelect
+          value={selectedLanguage}
+          onValueChange={(value) => setSelectedLanguage(value)}
+          items={[
+            { label: "Top Overall", value: "" },
+            { label: "JavaScript", value: "JavaScript" },
+            { label: "TypeScript", value: "TypeScript" },
+            { label: "Java", value: "Java" },
+            { label: "Python", value: "Python" },
+            { label: "C", value: "C" },
+            { label: "C++", value: "C++" },
+            { label: "CSS", value: "CSS" },
+            { label: "C#", value: "C#" },
+            { label: "Swift", value: "Swift" },
+            { label: "Rust", value: "Rust" },
+            { label: "Go", value: "Go" },
+            { label: "Ruby", value: "Ruby" },
+            { label: "PHP", value: "PHP" },
+            { label: "Web", value: "Web" },
+          ]}
+          style={{
+            inputIOS: styles.dropdownInput,
+            inputAndroid: styles.dropdownInput,
+            iconContainer: styles.iconContainer,
+            placeholder: { color: "737C8C" },
+          }}
+          useNativeAndroidPickerStyle={false}
+        />
+      </View>
       <FlatList
         data={data?.search.edges}
         renderItem={renderItem}
@@ -124,39 +81,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
   },
-  repositoryContainer: {
-    backgroundColor: "#8F96A3",
-    borderRadius: 15,
-    padding: 15,
-    margin: 10,
-    flex: 1 / 2, // Each item takes half the width of the screen
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6, // Missing comma added here
-  },
-  repositoryInfo: {
-    fontSize: 14,
-    color: "#333",
-  },
-  pickerContainer: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    borderRadius: 5,
-    margin: 10,
-    backgroundColor: "#ffffff",
-  },
-  pickerText: {
-    color: "#333333",
-  },
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
   iconContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -167,53 +91,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   titleImage: {
-    width: "70%", // Adjust as needed
-    height: 70, // Adjust as needed
-    marginTop: 20, // Adjust as needed
+    width: "70%",
+    height: 70,
+    marginTop: 20,
     marginBottom: 20,
     alignSelf: "center",
+  },
+  dropdownContainer: {
+    width: 150, // Set the width of the dropdown container
+    alignSelf: "flex-end", // Align the container to the right
+    marginRight: 10, // Add some right margin if needed
   },
   dropdownInput: {
     fontSize: 20,
     paddingHorizontal: 10,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: "gray", // Border color
+    borderColor: "gray",
     borderRadius: 4,
-    color: "white", // Text color
-    paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: "#737C8C", // Background color
-  },
-  repositoryContainer: {
-    backgroundColor: "#8F96A3",
-    borderRadius: 15,
-    padding: 15,
-    margin: 8,
-    flex: 1 / 2, // Varje element tar hälften av skärmens bredd
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6,
-  },
-  repositoryTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "black", // Rubrik i svart
-  },
-  repositoryDescription: {
-    fontSize: 14,
-    color: "black", // Beskrivning i svart
-    marginTop: 5, // Lägg till utrymme ovanför beskrivningen
-  },
-  languageText: {
-    marginRight: 10,
-    color: "#c7cad1", // Språk i grått
-  },
-  languagesList: {
-    flexDirection: "row",
-    marginTop: 5, // Utrymme ovanför språklistan
-    marginBottom: 5, // Utrymme under språklistan
+    color: "white",
+    paddingRight: 30,
+    backgroundColor: "#737C8C",
   },
 });
+
 export default RepositoryList;
