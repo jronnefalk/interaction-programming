@@ -1,62 +1,84 @@
-import React, { useState, useRef, useEffect } from "react";
+// Carousel.js
+import React, { useRef, useEffect } from "react";
 import {
   View,
-  Animated,
+  ScrollView,
   StyleSheet,
-  Dimensions,
   Pressable,
   Text,
+  Dimensions,
 } from "react-native";
 import CarouselElement from "./CarouselElement";
+import CarouselNavigation from "./CarouselNavigation";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const Carousel = ({ items }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const extendedItems = [items[items.length - 1], ...items, items[0]];
+  const scrollViewRef = useRef(null);
+
+  const scrollToIndex = (index, animated = true) => {
+    scrollViewRef.current.scrollTo({
+      x: index * windowWidth,
+      animated: animated,
+    });
+  };
+
+  // Use the CarouselNavigation hook and pass the scrollToIndex function
+  const { activeIndex, goToPrev, goToNext, setActiveIndex } =
+    CarouselNavigation(extendedItems.length, scrollToIndex);
 
   useEffect(() => {
-    // Animate the transition to the new index
-    Animated.spring(scrollX, {
-      toValue: activeIndex * windowWidth,
-      useNativeDriver: true,
-    }).start();
-  }, [activeIndex]);
+    scrollViewRef.current.scrollTo({ x: windowWidth, animated: false });
+  }, []);
 
-  const goToPrev = () => {
-    setActiveIndex((prevIndex) =>
-      prevIndex === 0 ? items.length - 1 : prevIndex - 1
-    );
-  };
-
-  const goToNext = () => {
-    setActiveIndex((prevIndex) =>
-      prevIndex === items.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-  // Calculate the total width based on the number of items
-  const totalWidth = items.length * windowWidth;
+  const Dot = ({ isActive }) => (
+    <View
+      style={[styles.dot, isActive ? styles.activeDot : styles.inactiveDot]}
+    />
+  );
 
   return (
     <View style={styles.carouselContainer}>
-      <Animated.View
-        style={[
-          styles.scrollViewStyle,
-          {
-            width: totalWidth, // Use the totalWidth for the dynamic style
-            transform: [{ translateX: Animated.multiply(scrollX, -1) }],
-          },
-        ]}
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        scrollEnabled={false} // Disable manual scrolling
+        onMomentumScrollEnd={(e) => {
+          const scrolledIndex = Math.floor(
+            e.nativeEvent.contentOffset.x / windowWidth
+          );
+          if (
+            scrolledIndex === 0 ||
+            scrolledIndex === extendedItems.length - 1
+          ) {
+            const correctIndex =
+              scrolledIndex === 0 ? extendedItems.length - 2 : 1;
+            setActiveIndex(correctIndex);
+            scrollToIndex(correctIndex, false);
+          } else {
+            setActiveIndex(scrolledIndex);
+          }
+        }}
       >
-        {items.map((item, index) => (
-          <CarouselElement
+        {extendedItems.map((item, index) => (
+          <View
             key={index}
-            item={item}
             style={{ width: windowWidth, height: windowHeight }}
-          />
+          >
+            <CarouselElement item={item} />
+          </View>
         ))}
-      </Animated.View>
+      </ScrollView>
+
+      <View style={styles.dotsContainer}>
+        {items.map((_, index) => (
+          <Dot key={index} isActive={index + 1 === activeIndex} />
+        ))}
+      </View>
 
       <Pressable style={[styles.arrow, styles.arrowLeft]} onPress={goToPrev}>
         <Text style={styles.arrowText}>{"<"}</Text>
@@ -72,12 +94,8 @@ const styles = StyleSheet.create({
   carouselContainer: {
     width: windowWidth,
     height: windowHeight,
-    overflow: "hidden", // Hide the overflowed content
+    overflow: "hidden",
     backgroundColor: "black",
-  },
-  scrollViewStyle: {
-    flexDirection: "row", // Arrange items in a row
-    // Remove the width property from here
   },
   arrow: {
     position: "absolute",
@@ -88,16 +106,36 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   arrowLeft: {
-    left: 200,
+    left: "10%",
   },
   arrowRight: {
-    right: 200,
+    right: "10%",
   },
   arrowText: {
     fontSize: 24,
     color: "#fff",
   },
-  // ... other styles ...
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: windowWidth,
+    bottom: 40,
+    left: 0,
+  },
+  dot: {
+    width: 20,
+    height: 5,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: "white",
+  },
+  inactiveDot: {
+    backgroundColor: "gray",
+  },
 });
 
 export default Carousel;

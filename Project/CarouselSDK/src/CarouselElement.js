@@ -23,14 +23,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   imageContainer: {
-    width: windowWidth * 0.9, // Adjust width as needed
-    height: windowHeight * 0.8, // Adjust height as needed
+    width: windowWidth * 0.9,
+    height: windowHeight * 0.8,
     alignItems: "center",
     justifyContent: "center",
   },
   image: {
-    width: "100%", // Use 100% of the imageContainer
-    height: "100%", // Use 100% of the imageContainer
+    width: "100%",
+    height: "100%",
     resizeMode: "contain",
   },
   title: {
