@@ -12,7 +12,7 @@ const RepositoryList = ({ navigation }) => {
   useEffect(() => {
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-    const oneMonthAgoString = oneMonthAgo.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    const oneMonthAgoString = oneMonthAgo.toISOString().split("T")[0];
 
     const languageQuery = selectedLanguage
       ? `language:${selectedLanguage} `
@@ -76,7 +76,7 @@ const RepositoryList = ({ navigation }) => {
       <FlatList
         data={data?.search.edges}
         renderItem={renderItem}
-        keyExtractor={(item) => `repository-${item.node.id}`} // Use the repository ID as the key
+        keyExtractor={(item) => `repository-${item.node.id}`}
         numColumns={2}
         columnWrapperStyle={styles.row}
       />
@@ -109,9 +109,9 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   dropdownContainer: {
-    width: 150, // Set the width of the dropdown container
-    alignSelf: "flex-end", // Align the container to the right
-    marginRight: 10, // Add some right margin if needed
+    width: 150,
+    alignSelf: "flex-end",
+    marginRight: 10,
   },
   dropdownInput: {
     fontSize: 20,
