@@ -1,11 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import PasswordStrengthMeter from "./PasswordStrengthMeter";
+import PasswordStrengthMeterTest from "./PasswordStrengthMeterTest";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <PasswordStrengthMeter></PasswordStrengthMeter>
+      <PasswordStrengthMeterTest />
       <StatusBar style="auto" />
     </View>
   );

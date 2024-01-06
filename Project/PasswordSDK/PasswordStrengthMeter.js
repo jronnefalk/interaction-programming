@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
 const PasswordCriteria = ({ isValid, text }) => (
@@ -7,32 +7,75 @@ const PasswordCriteria = ({ isValid, text }) => (
   </Text>
 );
 
-const PasswordStrengthMeter = () => {
+const defaultStrengthAlgorithm = (password, criteria) => {
+  let strength = 0;
+  Object.values(criteria).forEach((isValid) => {
+    if (isValid) strength += 20;
+  });
+  return strength; // Returns a strength score between 0 and 100
+};
+
+const PasswordStrengthMeter = ({
+  minLength = 8,
+  maxLength = 50,
+  requireUpperCase = true,
+  requireLowerCase = true,
+  requireNumbers = true,
+  requireSpecialChars = true,
+  allowedSpecialChars = "!@#$%^&*",
+  customStrengthAlgorithm = null,
+  strengthBarColors = {
+    weak: "red",
+    fair: "orange",
+    good: "yellow",
+    strong: "lightgreen",
+    veryStrong: "green",
+  },
+}) => {
   const [password, setPassword] = useState("");
 
-  const passwordCriteria = {
-    length: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
-    special: /[^A-Za-z0-9]/.test(password),
-    startWithLetter: /^[A-Za-z]/.test(password),
-  };
+  const passwordCriteria = useMemo(
+    () => ({
+      length: password.length >= minLength && password.length <= maxLength,
+      upper: requireUpperCase ? /[A-Z]/.test(password) : true,
+      lower: requireLowerCase ? /[a-z]/.test(password) : true,
+      number: requireNumbers ? /\d/.test(password) : true,
+      special: requireSpecialChars
+        ? new RegExp("[" + allowedSpecialChars + "]").test(password)
+        : true,
+    }),
+    [
+      password,
+      minLength,
+      maxLength,
+      requireUpperCase,
+      requireLowerCase,
+      requireNumbers,
+      requireSpecialChars,
+      allowedSpecialChars,
+    ]
+  );
+
+  const calculateStrength = useMemo(() => {
+    const algorithm = customStrengthAlgorithm || defaultStrengthAlgorithm;
+    return algorithm(password, passwordCriteria);
+  }, [password, passwordCriteria, customStrengthAlgorithm]);
 
   const getPasswordStrengthBarStyle = () => {
-    const totalCriteria = Object.keys(passwordCriteria).length;
-    const criteriaMet = Object.values(passwordCriteria).filter(Boolean).length;
-    const strength = (criteriaMet / totalCriteria) * 100;
+    // calculateStrength is a value, not a function, so you use it directly
+    const strength = calculateStrength; // Corrected usage
 
-    let barColor = "red";
-    if (strength >= 75) barColor = "green";
-    else if (strength >= 50) barColor = "yellow";
-    else if (strength >= 25) barColor = "orange";
+    let barColor = strengthBarColors.weak; // Default color when no password has been entered
+
+    if (strength >= 80) barColor = strengthBarColors.veryStrong;
+    else if (strength >= 60) barColor = strengthBarColors.strong;
+    else if (strength >= 40) barColor = strengthBarColors.good;
+    else if (strength >= 20) barColor = strengthBarColors.fair;
 
     return {
-      width: `${strength}%`,
+      width: password && strength > 0 ? `${strength}%` : "0%",
       backgroundColor: barColor,
-      height: 10, // Example height
+      height: 10,
     };
   };
 
@@ -40,9 +83,7 @@ const PasswordStrengthMeter = () => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        onChangeText={(text) => {
-          setPassword(text);
-        }}
+        onChangeText={setPassword}
         value={password}
         secureTextEntry
         placeholder="Enter your password"
@@ -51,26 +92,33 @@ const PasswordStrengthMeter = () => {
         <View style={getPasswordStrengthBarStyle()} />
       </View>
       <View style={styles.criteriaList}>
-        <PasswordCriteria
-          isValid={passwordCriteria.startWithLetter}
-          text="Start with a letter"
-        />
-        <PasswordCriteria
-          isValid={passwordCriteria.upper}
-          text="One uppercase letter"
-        />
-        <PasswordCriteria
-          isValid={passwordCriteria.lower}
-          text="One lowercase letter"
-        />
-        <PasswordCriteria isValid={passwordCriteria.number} text="One number" />
-        <PasswordCriteria
-          isValid={passwordCriteria.special}
-          text="One special character (!,@,#,$,%)"
-        />
+        {requireUpperCase && (
+          <PasswordCriteria
+            isValid={passwordCriteria.upper}
+            text="One uppercase letter"
+          />
+        )}
+        {requireLowerCase && (
+          <PasswordCriteria
+            isValid={passwordCriteria.lower}
+            text="One lowercase letter"
+          />
+        )}
+        {requireNumbers && (
+          <PasswordCriteria
+            isValid={passwordCriteria.number}
+            text="One number"
+          />
+        )}
+        {requireSpecialChars && (
+          <PasswordCriteria
+            isValid={passwordCriteria.special}
+            text="One special character (!,@,#,$,%)"
+          />
+        )}
         <PasswordCriteria
           isValid={passwordCriteria.length}
-          text="At least 8 characters"
+          text={`At least ${minLength} characters`}
         />
       </View>
     </View>
