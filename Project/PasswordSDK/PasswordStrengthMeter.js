@@ -65,9 +65,12 @@ const PasswordStrengthMeter = ({
     else if (strength >= 40) barColor = strengthBarColors.good;
     else if (strength >= 20) barColor = strengthBarColors.fair;
 
+    // Ensure the strength does not exceed 100
+    const strengthPercentage = Math.min(strength, 100);
+
     // Return the style for the strength bar
     return {
-      width: `${strength}%`, // The width of the bar represents the strength
+      width: `${strengthPercentage}%`, // The width of the bar represents the strength, capped at 100%
       backgroundColor: barColor, // The color represents the strength level
       height: 10,
     };
