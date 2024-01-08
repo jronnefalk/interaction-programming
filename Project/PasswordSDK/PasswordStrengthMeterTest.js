@@ -2,7 +2,7 @@ import React from "react";
 import { View, ScrollView, StyleSheet, Text } from "react-native";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
 
-// Example custom strength algorithm
+// custom strength algorithm
 const customStrengthAlgorithm = (password) => {
   let strength = 0;
   if (password.length > 10) strength += 30;
@@ -10,7 +10,7 @@ const customStrengthAlgorithm = (password) => {
   if (/[a-z]/.test(password)) strength += 20;
   if (/\d/.test(password)) strength += 20;
   if (/[^A-Za-z0-9]/.test(password)) strength += 10;
-  return Math.min(strength, 100); // Ensure the strength doesn't exceed 100
+  return Math.min(strength, 100); // ensures that the strength doesn't exceed 100
 };
 
 const PasswordStrengthMeterTest = () => {
@@ -55,8 +55,6 @@ const PasswordStrengthMeterTest = () => {
           }}
         />
       </View>
-
-      {/* Add more test cases as needed */}
     </ScrollView>
   );
 };

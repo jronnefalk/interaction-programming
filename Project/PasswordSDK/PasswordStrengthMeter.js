@@ -1,21 +1,26 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
+// Show whether a password criteria has been met
 const PasswordCriteria = ({ isValid, text }) => (
   <Text style={[styles.criteria, isValid ? styles.valid : styles.invalid]}>
     {isValid ? "✓" : "✗"} {text}
   </Text>
 );
 
-const defaultStrengthAlgorithm = (password, criteria) => {
+// Simple algorithm to calculate password strength
+const defaultStrengthAlgorithm = (criteria) => {
+  // We start with zero strength and increase it by 20 for each criteria met
   let strength = 0;
   Object.values(criteria).forEach((isValid) => {
     if (isValid) strength += 20;
   });
-  return strength; // Returns a strength score between 0 and 100
+  return strength; // The strength is a score out of 100
 };
 
+// Main component for the password strength meter
 const PasswordStrengthMeter = ({
+  // The default props for our component
   minLength = 8,
   maxLength = 50,
   requireUpperCase = true,
@@ -32,99 +37,98 @@ const PasswordStrengthMeter = ({
     veryStrong: "green",
   },
 }) => {
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); // This state holds the input from our text field
 
-  const passwordCriteria = useMemo(
-    () => ({
-      length: password.length >= minLength && password.length <= maxLength,
-      upper: requireUpperCase ? /[A-Z]/.test(password) : true,
-      lower: requireLowerCase ? /[a-z]/.test(password) : true,
-      number: requireNumbers ? /\d/.test(password) : true,
-      special: requireSpecialChars
-        ? new RegExp("[" + allowedSpecialChars + "]").test(password)
-        : true,
-    }),
-    [
-      password,
-      minLength,
-      maxLength,
-      requireUpperCase,
-      requireLowerCase,
-      requireNumbers,
-      requireSpecialChars,
-      allowedSpecialChars,
-    ]
-  );
+  // We check the password against our criteria every time it changes
+  const passwordCriteria = {
+    length: password.length >= minLength && password.length <= maxLength,
+    upper: requireUpperCase && /[A-Z]/.test(password),
+    lower: requireLowerCase && /[a-z]/.test(password),
+    number: requireNumbers && /\d/.test(password),
+    special:
+      requireSpecialChars &&
+      new RegExp(`[${allowedSpecialChars}]`).test(password),
+  };
 
-  const calculateStrength = useMemo(() => {
-    const algorithm = customStrengthAlgorithm || defaultStrengthAlgorithm;
-    return algorithm(password, passwordCriteria);
-  }, [password, passwordCriteria, customStrengthAlgorithm]);
+  // We calculate the strength of the password using either the default algorithm or a custom one
+  const strength = customStrengthAlgorithm
+    ? customStrengthAlgorithm(password, passwordCriteria)
+    : defaultStrengthAlgorithm(password, passwordCriteria);
 
+  // This function determines the color of the strength bar based on the password strength
   const getPasswordStrengthBarStyle = () => {
-    // calculateStrength is a value, not a function, so you use it directly
-    const strength = calculateStrength; // Corrected usage
+    let barColor = strengthBarColors.weak; // Start with the weakest color
 
-    let barColor = strengthBarColors.weak; // Default color when no password has been entered
-
+    // Then adjust the color based on how strong the password is
     if (strength >= 80) barColor = strengthBarColors.veryStrong;
     else if (strength >= 60) barColor = strengthBarColors.strong;
     else if (strength >= 40) barColor = strengthBarColors.good;
     else if (strength >= 20) barColor = strengthBarColors.fair;
 
+    // Return the style for the strength bar
     return {
-      width: password && strength > 0 ? `${strength}%` : "0%",
-      backgroundColor: barColor,
+      width: `${strength}%`, // The width of the bar represents the strength
+      backgroundColor: barColor, // The color represents the strength level
       height: 10,
     };
   };
 
   return (
     <View style={styles.container}>
+      {/* Input field for the password */}
       <TextInput
         style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-        secureTextEntry
-        placeholder="Enter your password"
+        onChangeText={setPassword} // Update the password state as the user types
+        value={password} // Display the current password value
+        secureTextEntry // Hide password content
+        placeholder="Enter your password..." // Prompt text for users
       />
+      {/* Container for the visual strength bar */}
       <View style={styles.strengthBarContainer}>
+        {/* The colored bar indicating password strength */}
         <View style={getPasswordStrengthBarStyle()} />
       </View>
+      {/* List of criteria the password is being checked against */}
       <View style={styles.criteriaList}>
+        {/* Check for minimum length */}
+        <PasswordCriteria
+          isValid={passwordCriteria.length}
+          text={`At least ${minLength} characters`}
+        />
+        {/* Check for uppercase characters */}
         {requireUpperCase && (
           <PasswordCriteria
             isValid={passwordCriteria.upper}
             text="One uppercase letter"
           />
         )}
+        {/* Check for lowercase characters */}
         {requireLowerCase && (
           <PasswordCriteria
             isValid={passwordCriteria.lower}
             text="One lowercase letter"
           />
         )}
+        {/* Check for numeric characters */}
         {requireNumbers && (
           <PasswordCriteria
             isValid={passwordCriteria.number}
             text="One number"
           />
         )}
+        {/* Check for special characters */}
         {requireSpecialChars && (
           <PasswordCriteria
             isValid={passwordCriteria.special}
-            text="One special character (!,@,#,$,%)"
+            text={`One special character (${allowedSpecialChars})`}
           />
         )}
-        <PasswordCriteria
-          isValid={passwordCriteria.length}
-          text={`At least ${minLength} characters`}
-        />
       </View>
     </View>
   );
 };
 
+// Here we define the styles used in our component
 const styles = StyleSheet.create({
   container: {
     padding: 20,
