@@ -1,81 +1,91 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const PasswordStrengthMeter = ({
-  password,
-  calculateStrength,
-  colorScheme,
-  labels,
-  barWidth = "100%",
-  showStrengthBar = true,
-  showFeedbackText = false,
-}) => {
-  // If no custom function is provided, use a default one
-  const strengthScore = calculateStrength
-    ? calculateStrength(password)
-    : defaultStrengthCalculation(password);
-  const normalizedStrength = Math.min(
-    Math.max(strengthScore, 0),
-    labels.length - 1
-  );
-  const barColor = colorScheme[normalizedStrength];
-  const strengthLabel = labels[normalizedStrength];
+const PasswordStrengthMeter = ({ password, score, customStrengthLevels }) => {
+  const defaultStrengthLevels = [
+    { label: "Very Weak", threshold: 10, color: "red" },
+    { label: "Weak", threshold: 30, color: "orange" },
+    { label: "Average", threshold: 50, color: "yellow" },
+    { label: "Strong", threshold: 70, color: "lightgreen" },
+    { label: "Very Strong", threshold: 90, color: "green" },
+  ];
 
-  const styles = StyleSheet.create({
-    container: {
-      width: barWidth,
-      height: 10,
-      backgroundColor: "#eee",
-      borderRadius: 5,
-      overflow: "hidden",
-      marginTop: 10,
-    },
-    strengthBar: {
-      width: `${(normalizedStrength / (labels.length - 1)) * 100}%`,
-      height: "100%",
-      backgroundColor: barColor,
-    },
-    label: {
-      marginTop: 5,
-      fontWeight: "bold",
-    },
-    feedbackText: {
-      marginTop: 5,
-      color: "gray",
-    },
-  });
+  const levels = customStrengthLevels || defaultStrengthLevels;
+  const maxThreshold = levels[levels.length - 1].threshold;
+
+  const getLevelInfo = () => {
+    for (let i = 0; i < levels.length; i++) {
+      if (score <= levels[i].threshold) {
+        return levels[i];
+      }
+    }
+    return levels[levels.length - 1];
+  };
+
+  const { label, color } = getLevelInfo();
+  const barWidth = `${(score / maxThreshold) * 100}%`;
+
+  useEffect(() => {
+    // This useEffect will be triggered whenever the score changes
+    console.log(`Score: ${score}, Label: ${label}, Bar Width: ${barWidth}`);
+  }, [score, label, barWidth]);
 
   return (
-    <View>
-      {showStrengthBar && (
-        <View style={styles.container}>
-          <View style={styles.strengthBar} />
-        </View>
+    <View style={styles.container}>
+      <View
+        style={[
+          styles.strengthBar,
+          { width: barWidth, backgroundColor: color },
+        ]}
+      />
+      {password && password.length > 0 && (
+        <Text style={[styles.label, { color: "black" }]}>{label}</Text>
       )}
-      <Text style={styles.label}>Strength: {strengthLabel}</Text>
-      {showFeedbackText && (
-        <Text style={styles.feedbackText}>
-          Tips to improve your password strength.
-        </Text>
-      )}
+
+      {/* Display labels for custom or default levels */}
+      <View style={styles.labelsContainer}>
+        {levels.map((level, index) => (
+          <Text
+            key={index}
+            style={[
+              styles.levelLabel,
+              {
+                color: "black",
+                fontWeight: label === level.label ? "bold" : "normal",
+              },
+            ]}
+          ></Text>
+        ))}
+      </View>
     </View>
   );
 };
 
-// Enhanced default algorithm for strength calculation
-const defaultStrengthCalculation = (password) => {
-  if (!password) return 0;
-  let strengthPoints = 0;
-
-  if (password.length >= 8) strengthPoints++; // Length >= 8
-  if (password.length >= 12) strengthPoints++; // Length >= 12
-  if (/[a-z]/.test(password)) strengthPoints++; // Contains lowercase
-  if (/[A-Z]/.test(password)) strengthPoints++; // Contains uppercase
-  if (/\d/.test(password)) strengthPoints++; // Contains number
-  if (/[^A-Za-z0-9]/.test(password)) strengthPoints++; // Contains special character
-
-  // Normalize to a scale of 0 to 5
-  return Math.min(strengthPoints, 5);
-};
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    marginTop: 10,
+  },
+  strengthBar: {
+    height: 10,
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  label: {
+    marginTop: 5,
+    fontWeight: "bold",
+    color: "black",
+  },
+  labelsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 5,
+  },
+  levelLabel: {
+    flex: 1,
+    textAlign: "center",
+    color: "black",
+  },
+});
 
 export default PasswordStrengthMeter;
