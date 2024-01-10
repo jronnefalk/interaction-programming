@@ -1,14 +1,8 @@
 import React from "react";
-import { View } from "react-native";
-import Carousel from "../CarouselSDK/src/Carousel";
-import { carouselData } from "./src/carouselData";
+import CarouselTest from "./src/CarouselTest";
 
 const App = () => {
-  return (
-    <View>
-      <Carousel items={carouselData} />
-    </View>
-  );
+  return <CarouselTest />;
 };
 
 export default App;

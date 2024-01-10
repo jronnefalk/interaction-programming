@@ -1,22 +1,22 @@
-export const carouselData = [
+export const placeholderData = [
   {
-    title: "Bild 1",
+    title: "Placeholder Image 1",
     imageSource: require("../assets/1.jpg"),
   },
   {
-    title: "Bild 2",
+    title: "Placeholder Image 2",
     imageSource: require("../assets/2.jpg"),
   },
   {
-    title: "Bild 3",
+    title: "Placeholder Image 3",
     imageSource: require("../assets/3.jpg"),
   },
   {
-    title: "Bild 4",
+    title: "Placeholder Image 4",
     imageSource: require("../assets/4.jpg"),
   },
   {
-    title: "Bild 5",
+    title: "Placeholder Image 5",
     imageSource: require("../assets/5.jpg"),
   },
 ];

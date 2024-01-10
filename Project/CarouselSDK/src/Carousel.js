@@ -10,14 +10,28 @@ import {
 } from "react-native";
 import CarouselElement from "./CarouselElement";
 import CarouselNavigation from "./CarouselNavigation";
+import { placeholderData } from "./placeholderData";
 
+// To set the size of carousel elements
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Carousel = ({ items }) => {
-  const extendedItems = [items[items.length - 1], ...items, items[0]];
+// Gets itemps as a prop (array to display)
+const Carousel = ({ items, arrowColor = "#fff" }) => {
+  const carouselItems = items && items.length > 0 ? items : placeholderData;
+  const isSingleItem = carouselItems.length === 1;
+
+  const extendedItems = isSingleItem
+    ? carouselItems
+    : [
+        carouselItems[carouselItems.length - 1], // last item to the beginnig
+        ...carouselItems, // all items in carouselItems
+        carouselItems[0], //first item to the end
+      ];
   const scrollViewRef = useRef(null);
 
+  // Function that controlls the scroll position of the ScrollView
+  // bestämmer om animated ska vara smooth eller instant
   const scrollToIndex = (index, animated = true) => {
     scrollViewRef.current.scrollTo({
       x: index * windowWidth,
@@ -26,9 +40,13 @@ const Carousel = ({ items }) => {
   };
 
   // Use the CarouselNavigation hook and pass the scrollToIndex function
-  const { activeIndex, goToPrev, goToNext, setActiveIndex } =
-    CarouselNavigation(extendedItems.length, scrollToIndex);
+  const { activeIndex, goToPrev, goToNext } = CarouselNavigation(
+    extendedItems.length,
+    scrollToIndex
+  );
 
+  // Adjust the initial scroll position of the ScrollView to show the first actual item
+  // Scrolls by the width of one window
   useEffect(() => {
     scrollViewRef.current.scrollTo({ x: windowWidth, animated: false });
   }, []);
@@ -42,49 +60,44 @@ const Carousel = ({ items }) => {
   return (
     <View style={styles.carouselContainer}>
       <ScrollView
-        ref={scrollViewRef}
+        ref={scrollViewRef} // kallar på scrollView.current.scrollTo()
         horizontal
-        pagingEnabled
+        pagingEnabled // show one item at a time
         showsHorizontalScrollIndicator={false}
         scrollEnabled={false} // Disable manual scrolling
-        onMomentumScrollEnd={(e) => {
-          const scrolledIndex = Math.floor(
-            e.nativeEvent.contentOffset.x / windowWidth
-          );
-          if (
-            scrolledIndex === 0 ||
-            scrolledIndex === extendedItems.length - 1
-          ) {
-            const correctIndex =
-              scrolledIndex === 0 ? extendedItems.length - 2 : 1;
-            setActiveIndex(correctIndex);
-            scrollToIndex(correctIndex, false);
-          } else {
-            setActiveIndex(scrolledIndex);
-          }
-        }}
       >
-        {extendedItems.map((item, index) => (
-          <View
-            key={index}
-            style={{ width: windowWidth, height: windowHeight }}
-          >
-            <CarouselElement item={item} />
-          </View>
-        ))}
+        {extendedItems.map(
+          (
+            item,
+            index // Iterates over each item in the array
+          ) => (
+            <View
+              key={index}
+              style={{ width: windowWidth, height: windowHeight }}
+            >
+              <CarouselElement item={item} />
+            </View>
+          )
+        )}
       </ScrollView>
 
       <View style={styles.dotsContainer}>
-        {items.map((_, index) => (
+        {carouselItems.map((_, index) => (
           <Dot key={index} isActive={index + 1 === activeIndex} />
         ))}
       </View>
 
-      <Pressable style={[styles.arrow, styles.arrowLeft]} onPress={goToPrev}>
-        <Text style={styles.arrowText}>{"<"}</Text>
+      <Pressable
+        style={[styles.arrow, styles.arrowLeft]}
+        onPress={isSingleItem ? null : goToPrev}
+      >
+        <Text style={[styles.arrowText, { color: arrowColor }]}>&lt;</Text>
       </Pressable>
-      <Pressable style={[styles.arrow, styles.arrowRight]} onPress={goToNext}>
-        <Text style={styles.arrowText}>{">"}</Text>
+      <Pressable
+        style={[styles.arrow, styles.arrowRight]}
+        onPress={isSingleItem ? null : goToNext}
+      >
+        <Text style={[styles.arrowText, { color: arrowColor }]}>&gt;</Text>
       </Pressable>
     </View>
   );
