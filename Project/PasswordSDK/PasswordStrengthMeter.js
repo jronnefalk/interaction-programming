@@ -1,17 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, TextInput, Text, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
 
-const PasswordStrengthMeter = ({ password, score, customStrengthLevels }) => {
-  const defaultStrengthLevels = [
-    { label: "Very Weak", threshold: 10, color: "red" },
-    { label: "Weak", threshold: 30, color: "orange" },
-    { label: "Average", threshold: 50, color: "yellow" },
-    { label: "Strong", threshold: 70, color: "lightgreen" },
-    { label: "Very Strong", threshold: 90, color: "green" },
-  ];
+const PasswordStrengthMeter = ({
+  scoreAlgorithm,
+  customStrengthLevels,
+  style,
+  onPasswordChange,
+}) => {
+  const [password, setPassword] = useState("");
+  const [score, setScore] = useState(0);
 
-  const levels = customStrengthLevels || defaultStrengthLevels;
-  const maxThreshold = levels[levels.length - 1].threshold;
+  useEffect(() => {
+    setScore(scoreAlgorithm(password));
+  }, [password, scoreAlgorithm]);
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    onPasswordChange && onPasswordChange(text); // Call the onPasswordChange prop
+  };
 
   const getLevelInfo = () => {
     for (let i = 0; i < levels.length; i++) {
@@ -22,69 +29,89 @@ const PasswordStrengthMeter = ({ password, score, customStrengthLevels }) => {
     return levels[levels.length - 1];
   };
 
+  const levels = customStrengthLevels || defaultStrengthLevels;
   const { label, color } = getLevelInfo();
-  const barWidth = `${(score / maxThreshold) * 100}%`;
-
-  useEffect(() => {
-    // This useEffect will be triggered whenever the score changes
-    console.log(`Score: ${score}, Label: ${label}, Bar Width: ${barWidth}`);
-  }, [score, label, barWidth]);
+  const barWidth = `${(score / levels[levels.length - 1].threshold) * 100}%`;
 
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.strengthBar,
-          { width: barWidth, backgroundColor: color },
-        ]}
+    <View style={[styles.container, style]}>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your password"
+        secureTextEntry={true}
+        onChangeText={handlePasswordChange}
+        value={password}
       />
-      {password && password.length > 0 && (
-        <Text style={[styles.label, { color: "black" }]}>{label}</Text>
-      )}
-
-      {/* Display labels for custom or default levels */}
-      <View style={styles.labelsContainer}>
-        {levels.map((level, index) => (
-          <Text
-            key={index}
+      {password.length > 0 && (
+        <>
+          <View
             style={[
-              styles.levelLabel,
-              {
-                color: "black",
-                fontWeight: label === level.label ? "bold" : "normal",
-              },
+              styles.progressBar,
+              { backgroundColor: color, width: barWidth },
             ]}
-          ></Text>
-        ))}
-      </View>
+          />
+          <Text style={styles.label}>{label}</Text>
+        </>
+      )}
     </View>
   );
 };
 
+const defaultStrengthLevels = [
+  { label: "Very Weak", threshold: 10, color: "red" },
+  { label: "Weak", threshold: 30, color: "orange" },
+  { label: "Average", threshold: 50, color: "yellow" },
+  { label: "Strong", threshold: 70, color: "lightgreen" },
+  { label: "Very Strong", threshold: 100, color: "green" },
+];
+
+PasswordStrengthMeter.propTypes = {
+  scoreAlgorithm: PropTypes.func.isRequired,
+  customStrengthLevels: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      threshold: PropTypes.number,
+      color: PropTypes.string,
+    })
+  ),
+  style: PropTypes.object,
+  onPasswordChange: PropTypes.func.isRequired,
+};
+
+PasswordStrengthMeter.defaultProps = {
+  customStrengthLevels: defaultStrengthLevels,
+  style: {},
+};
+
 const styles = StyleSheet.create({
   container: {
+    alignItems: "center",
+    padding: 6,
+    borderRadius: 8,
     width: "100%",
-    marginTop: 10,
+    marginBottom: 30,
   },
-  strengthBar: {
-    height: 10,
-    borderRadius: 5,
-    overflow: "hidden",
+  input: {
+    height: 30,
+    width: "100%",
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    marginBottom: 8,
   },
   label: {
     marginTop: 5,
     fontWeight: "bold",
-    color: "black",
+    color: "#000",
   },
-  labelsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 5,
-  },
-  levelLabel: {
-    flex: 1,
-    textAlign: "center",
-    color: "black",
+  progressBar: {
+    height: 10,
+    borderRadius: 5,
+    marginTop: 8,
+    marginBottom: 8,
+    backgroundColor: "lightgrey",
+    alignSelf: "stretch",
   },
 });
 
