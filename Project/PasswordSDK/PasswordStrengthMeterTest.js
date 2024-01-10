@@ -46,6 +46,7 @@ const PasswordStrengthMeterTest = () => {
         scoreAlgorithm={basicAlgorithm}
         customStrengthLevels={threeLevels}
         onPasswordChange={(password) => handlePasswordChange(password, 1)}
+        backgroundColor="lightgreen" // Change the background color here
       />
 
       <Text style={styles.title}>
@@ -55,6 +56,7 @@ const PasswordStrengthMeterTest = () => {
         scoreAlgorithm={advancedAlgorithm}
         customStrengthLevels={threeLevels}
         onPasswordChange={(password) => handlePasswordChange(password, 1)}
+        backgroundColor="lightgreen" // Change the background color here
       />
 
       <Text style={styles.title}>
@@ -64,6 +66,7 @@ const PasswordStrengthMeterTest = () => {
         scoreAlgorithm={basicAlgorithm}
         customStrengthLevels={fiveLevels}
         onPasswordChange={(password) => handlePasswordChange(password, 2)}
+        backgroundColor="lightblue" // Change the background color here
       />
 
       <Text style={styles.title}>
@@ -73,6 +76,7 @@ const PasswordStrengthMeterTest = () => {
         scoreAlgorithm={advancedAlgorithm}
         customStrengthLevels={fiveLevels}
         onPasswordChange={(password) => handlePasswordChange(password, 2)}
+        backgroundColor="lightblue" // Change the background color here
       />
       <Text style={styles.title}>
         Default strength levels with advanced algorithm
@@ -80,6 +84,7 @@ const PasswordStrengthMeterTest = () => {
       <PasswordStrengthMeter
         scoreAlgorithm={advancedAlgorithm}
         onPasswordChange={(password) => handlePasswordChange(password, 3)}
+        backgroundColor="lightpink" // Change the background color here
       />
     </ScrollView>
   );

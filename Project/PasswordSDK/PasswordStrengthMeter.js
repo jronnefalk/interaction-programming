@@ -7,17 +7,36 @@ const PasswordStrengthMeter = ({
   customStrengthLevels,
   style,
   onPasswordChange,
+  backgroundColor,
 }) => {
   const [password, setPassword] = useState("");
   const [score, setScore] = useState(0);
+  const [barWidth, setBarWidth] = useState("0%");
+  const [label, setLabel] = useState("");
+  const [color, setColor] = useState("lightgrey"); // Add color state
 
   useEffect(() => {
     setScore(scoreAlgorithm(password));
   }, [password, scoreAlgorithm]);
 
+  useEffect(() => {
+    const levels = customStrengthLevels || defaultStrengthLevels;
+    const { label, color } = getLevelInfo();
+    const newBarWidth = `${
+      (score / levels[levels.length - 1].threshold) * 100
+    }%`;
+
+    // Update the state variables
+    setBarWidth(newBarWidth);
+    setLabel(label);
+    setColor(color); // Update the color state
+
+    console.log("barWidth:", newBarWidth, "label:", label, "strength:", score);
+  }, [score, customStrengthLevels]);
+
   const handlePasswordChange = (text) => {
     setPassword(text);
-    onPasswordChange && onPasswordChange(text); // Call the onPasswordChange prop
+    onPasswordChange && onPasswordChange(text);
   };
 
   const getLevelInfo = () => {
@@ -30,11 +49,11 @@ const PasswordStrengthMeter = ({
   };
 
   const levels = customStrengthLevels || defaultStrengthLevels;
-  const { label, color } = getLevelInfo();
-  const barWidth = `${(score / levels[levels.length - 1].threshold) * 100}%`;
 
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[styles.container, style, { backgroundColor: backgroundColor }]}
+    >
       <TextInput
         style={styles.input}
         placeholder="Enter your password"
@@ -76,6 +95,7 @@ PasswordStrengthMeter.propTypes = {
   ),
   style: PropTypes.object,
   onPasswordChange: PropTypes.func.isRequired,
+  backgroundColor: PropTypes.string,
 };
 
 PasswordStrengthMeter.defaultProps = {
@@ -110,7 +130,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 8,
     marginBottom: 8,
-    backgroundColor: "lightgrey",
     alignSelf: "stretch",
   },
 });
