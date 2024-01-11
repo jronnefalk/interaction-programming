@@ -9,16 +9,19 @@ const PasswordStrengthMeter = ({
   onPasswordChange,
   backgroundColor,
 }) => {
+  // state variables
   const [password, setPassword] = useState("");
   const [score, setScore] = useState(0);
   const [barWidth, setBarWidth] = useState("0%");
   const [label, setLabel] = useState("");
-  const [color, setColor] = useState("lightgrey"); // Add color state
+  const [color, setColor] = useState("lightgrey");
 
+  // useEffect to update the score when the password changes
   useEffect(() => {
     setScore(scoreAlgorithm(password));
   }, [password, scoreAlgorithm]);
 
+  // useEffect to update the progress bar, label, and color based on the score
   useEffect(() => {
     const levels = customStrengthLevels || defaultStrengthLevels;
     const { label, color } = getLevelInfo();
@@ -26,19 +29,21 @@ const PasswordStrengthMeter = ({
       (score / levels[levels.length - 1].threshold) * 100
     }%`;
 
-    // Update the state variables
+    // update the state variables
     setBarWidth(newBarWidth);
     setLabel(label);
-    setColor(color); // Update the color state
+    setColor(color);
 
     console.log("barWidth:", newBarWidth, "label:", label, "strength:", score);
   }, [score, customStrengthLevels]);
 
+  // handle password input changes
   const handlePasswordChange = (text) => {
     setPassword(text);
     onPasswordChange && onPasswordChange(text);
   };
 
+  // function to get strength level info from current score, depending on threshold in levels
   const getLevelInfo = () => {
     for (let i = 0; i < levels.length; i++) {
       if (score <= levels[i].threshold) {
@@ -48,6 +53,7 @@ const PasswordStrengthMeter = ({
     return levels[levels.length - 1];
   };
 
+  // custom strength levels if provided. Otherwise, default levels
   const levels = customStrengthLevels || defaultStrengthLevels;
 
   return (
@@ -76,6 +82,7 @@ const PasswordStrengthMeter = ({
   );
 };
 
+// default strength levels with labels, thresholds, and colors
 const defaultStrengthLevels = [
   { label: "Very Weak", threshold: 10, color: "red" },
   { label: "Weak", threshold: 30, color: "orange" },
@@ -84,6 +91,7 @@ const defaultStrengthLevels = [
   { label: "Very Strong", threshold: 100, color: "green" },
 ];
 
+// prop types for the component
 PasswordStrengthMeter.propTypes = {
   scoreAlgorithm: PropTypes.func.isRequired,
   customStrengthLevels: PropTypes.arrayOf(
@@ -98,6 +106,7 @@ PasswordStrengthMeter.propTypes = {
   backgroundColor: PropTypes.string,
 };
 
+// default props for the component
 PasswordStrengthMeter.defaultProps = {
   customStrengthLevels: defaultStrengthLevels,
   style: {},
